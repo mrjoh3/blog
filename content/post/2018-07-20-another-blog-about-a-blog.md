@@ -59,13 +59,22 @@ When travis builds the site it runs `blogdown::build_site()` just as you would o
 
 After several dead-ends and messing around with folder names to appease the Github gods (the were not appeased), I came across instructions on the [GoHugo website](https://gohugo.io/hosting-and-deployment/hosting-on-github/#github-user-or-organization-pages). This involved creating 2 repositories one called `blog` and the other `<USER>.github.io` and then setting up the public folder of `blog` as a git-submodule that commits to `<USER>.github.io`.
 
+The only drawback is that if you use the git GUI in RStudio the sub-module does not commit. But this is likely user error as my knowledge of git is limited. For now I am using the terminal to push changes in the public folder.
 
 
-```
 
+```bash
+
+# run once
 git submodule add -b master git@github.com:mrjoh3/mrjoh3.github.io.git public
+
+cd public
+
 git pull
 
+# after updates
 git add .
 git commit -m 'some message'
 git push origin master
+
+```
