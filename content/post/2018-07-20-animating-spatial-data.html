@@ -1,0 +1,51 @@
+---
+title: Animating Spatial Data
+author: Matt Johnsom
+date: '2018-07-20'
+slug: animating-spatial-data
+categories: ['data visualisation']
+tags:
+  - ggplot2
+  - gganimate
+  - sf
+  - rstats
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+
+
+<pre class="r"><code>library(dplyr)
+library(sf)
+library(ggplot2)
+library(gganimate)
+
+shp &lt;- st_read(&#39;~/Documents/Matt/GIS/shp&#39;,&#39;Crashes_Last_Five_Years&#39;, quiet = TRUE) %&gt;%
+  filter(ALCOHOL_RE == &#39;Yes&#39;) %&gt;%
+  mutate(date = as.Date(as.character(ACCIDENT_D), &#39;%d/%m/%Y&#39;))
+  
+vic &lt;- st_read(&#39;~/Documents/Matt/GIS/shp&#39;, &#39;VIC_STATE_POLYGON_shp&#39;, quiet = TRUE) 
+
+plt &lt;- ggplot() +
+  geom_sf(data = vic, fill = &#39;grey&#39;, colour = &#39;darkgrey&#39;) +
+  geom_sf(data = shp, aes(colour = SEVERITY)) +
+  scale_color_manual(values = c(&#39;red&#39;, &#39;orange&#39; ,&#39;yellow&#39;)) +
+  guides(colour = guide_legend(&#39;&#39;)) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        panel.background = element_rect(fill = &quot;darkgrey&quot;, colour = &quot;darkgrey&quot;),
+        plot.background = element_rect(fill = &quot;darkgrey&quot;),
+        legend.position = &quot;bottom&quot;,
+        legend.background = element_rect(fill = &quot;darkgrey&quot;),
+        legend.key = element_rect(fill = &quot;darkgrey&quot;, colour = &quot;darkgrey&quot;)) +
+  labs(title = &#39;Alcohol Related Daily Road Accidents in Victoria 2012-2017&#39;,
+       subtitle = &#39;Date: {frame_time}&#39;) +
+  transition_time(date) +
+  ease_aes(&#39;linear&#39;)</code></pre>
