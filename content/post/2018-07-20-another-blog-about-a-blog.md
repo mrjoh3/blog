@@ -49,3 +49,23 @@ Be sure to read any documentation that comes with the theme as they are all diff
 `Hugo` generates static sites so there are many deployment options. The simplest is to run `blogdown::build_site()` and then copy the contents of the `public` folder to your hosting service. I won't go thoughthem as the `blogdown` book mentioned above goes into great detail. 
 
 As I am too cheap to pay for a hosting service but and want to make use of my github pages url I am using Github and Travis. Again, refer to the blogdown book for instructions. The only trick was linking the github repo with travis with permissions to write back to the repo. [This post](https://medium.com/zendesk-engineering/how-to-create-a-website-like-freshswift-net-using-hugo-travis-ci-and-github-pages-67be6f480298) contained all the details necesary for setting an environment variable in Travis.
+
+This worked nicely **BUT**... 
+
+
+## Actually Deploying
+
+When travis builds the site it runs `blogdown::build_site()` just as you would on your computer. Now if you have an `.Rmd` post that uses packages, they are installed on your computer but they are not on Travis. Travis can be configured to install the packages, but you will have to do this each time you add use a new package. And this seems like a lot of effort when you can simply build the site locally and move thje static files.
+
+After several dead-ends and messing around with folder names to appease the Github gods (the were not appeased), I came across instructions on the [GoHugo website](https://gohugo.io/hosting-and-deployment/hosting-on-github/#github-user-or-organization-pages). This involved creating 2 repositories one called `blog` and the other `<USER>.github.io` and then setting up the public folder of `blog` as a git-submodule that commits to `<USER>.github.io`.
+
+
+
+```
+
+git submodule add -b master git@github.com:mrjoh3/mrjoh3.github.io.git public
+git pull
+
+git add .
+git commit -m 'some message'
+git push origin master
