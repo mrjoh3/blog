@@ -1,18 +1,17 @@
 ---
 title: Another blog about a blog
 author: Matt Johnson
-date: '2018-07-20'
+date: '2018-07-21'
 slug: another-blog-about-a-blog
-categories: ['web']
+featured: "snow-header.png"
+featuredalt: "snow walk"
+featuredpath: "img"
+categories:
+  - web
 tags:
-  - hugo
   - blogdown
+  - hugo
   - rstats
-description: ''
-featured: ''
-featuredalt: ''
-featuredpath: ''
-linktitle: ''
 ---
 
 Currently I mostly work with `R` and use it for statistics, modelling, GIS and web / pdf based reporting. Therefore the choice of `Blogdown` seemed simple enough. You will find many existing posts about others setting up their blogs in a similar way. Further, the book [blogdown: Creating Websites with R Markdown](https://bookdown.org/yihui/blogdown/) by [Yihui Xie](https://bookdown.org/yihui/blogdown/yihui-xie.html) *et al.* covers everything you need to know about the process. Here, I am only going to discuss the few specific issues I had to deal with to get started.

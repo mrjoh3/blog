@@ -1,6 +1,6 @@
 ---
 title: Animating Spatial Data
-author: Matt Johnsom
+author: Matt Johnson
 date: '2018-07-20'
 slug: animating-spatial-data
 categories: ['data visualisation']
@@ -16,6 +16,9 @@ featuredpath: ''
 linktitle: ''
 ---
 
+<center>
+![Alcohol related accidents in Victoria](/post/2018-07-20-animating-spatial-data_files/vic_alcohol.gif)
+</center>
 
 ```{r, warning=FALSE, message=FALSE}
 
@@ -54,3 +57,8 @@ plt <- ggplot() +
 
 
 ```
+
+
+
+
+
