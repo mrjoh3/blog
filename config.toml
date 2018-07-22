@@ -27,7 +27,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
   weight = 2
 
 [[menu.main]]
-  name = "All Posts"
+  name = "Blog"
   url = "/post/"
   identifier = "fa fa-list"
   weight = 4
@@ -55,14 +55,18 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 [params]
     description = "A website built through Hugo and blogdown."
 
-    # options for highlight.js (version, additional languages, and theme)
-    highlightjsVersion = "9.11.0"
-    highlightjsCDN = "https://cdn.bootcss.com"
-    highlightjsLang = ["r", "yaml"]
-    highlightjsTheme = "atom one dark"
-
-    MathJaxCDN = "https://cdn.bootcss.com"
-    MathJaxVersion = "2.7.1"
+  navbarTitle          = ""
+  # Sets where "View More Posts" links
+  viewMorePostLink     = "/post/"
+  
+  # options for highlight.js (version, additional languages, and theme)
+  disable_highlight = false # set to true to disable Highlight
+  highlightjsVersion = "9.11.0"
+  highlightjsCDN = "https://cdn.bootcss.com"
+  highlightjsLang = ["r", "yaml", "css", "bash"]
+  highlightjsTheme = "github"
+  MathJaxCDN = "https://cdn.bootcss.com"
+  MathJaxVersion = "2.7.1"
 
     [params.logo]
     url = "logo.png"
@@ -104,6 +108,10 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
   socialShareEmail     = true
   
   
+  customCSS            = ["default"]
+  customJS             = ["default"]
+  
+  
   # These are optional params related to the sidebar. They are recommended, but not
   # required for proper functionality. HTML is supported within the params.
 [params.intro]
@@ -118,13 +126,20 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
   [params.intro.pic]
     src       = "/img/logo.jpg"
     # Sets Image to be a cirlce
-    circle    = true
+    circle    = false
     # Sets Image to be Future Imperfect's hexagon
     imperfect = false
     width     = "200px"
-    alt       = "Hugo Future Imperfect"
+    alt       = "sensless"
 
 [params.postAmount]
 # Sets the number of recent posts to show in the sidebar. The default value is 5.
     sidebar = 5
 
+[params.staticman]
+  # Sets Statiman to be active
+  staticman = false
+  # Sets the location for Staticman to connect to
+  username  = "mrjoh3"
+  repo      = "blog"
+  branch    = "master"
