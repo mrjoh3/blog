@@ -1,0 +1,96 @@
+---
+title: Filtering Spatial Data with Crosstalk
+author: Matt Johnson
+date: '2018-07-25'
+tags:
+  - crosstalk
+  - leaflet
+  - rstats
+slug: filtering-spatial-data
+type: post
+---
+
+In a [previous post](https://mrjoh3.github.io/2018/07/20/animating-spatial-data/) I wanted to look at the daily pattern of motor vehicle accidents across the state of Victoria. What I am really interested in though is the accidents in my local area. 
+
+To do this I am going to use `leaflet`, `sf` to handle all the spatial data and `crosstalk` to filter and cut the data visible in the map. The `crosstalk` package enables a level of interactivity that is usually reserved for more complex server (`shiny`) based applications.
+
+The data is from the [VicRoads open data portal](https://vicroadsopendata-vicroadsmaps.opendata.arcgis.com/datasets/c2a69622ebad42e7baaa8167daa72127_0). The portal has an API but I have preiously downloaded the entire dataset as a shapefile. There are more than 75 thousand accidents recorded in the dataset but I am only looking at accidents related to alcohol.
+
+```{r, warning=FALSE, message=FALSE}
+
+library(sf)
+library(dplyr)
+library(leaflet)
+library(crosstalk)
+library(leaflet.extras)
+library(lubridate)
+
+
+shp <- st_read('~/Documents/Matt/GIS/shp','Crashes_Last_Five_Years', quiet = TRUE) %>%
+  filter(ALCOHOL_RE == 'Yes') %>%
+  mutate(date = as.Date(as.character(ACCIDENT_D), '%d/%m/%Y'),
+         year = year(date))
+
+sd <- SharedData$new(shp)
+
+```
+
+Once the data is imported and cleaned it is inserted into a `crosstalk::SharedData$new()` object. This creates a common data input for all interactive objects such as UI elements and compatible widgets. For a complete list of compatible widgets see the [crosstalk reference page](https://rstudio.github.io/crosstalk/widgets.html).
+
+Am minimal example can be just two lines of additional code which results in a UI slider conected to the date field and a leaflet map. Adjusting the slider will filter the markers visible in the map.
+
+```r
+
+filter_slider("date", "Date", sd, column=~date, step=10, width=800)
+leaflet(sd) %>% addTiles() %>% addMarkers()
+
+
+```
+
+But let's add some additional layers of interactivity. `Crosstalk` has three UI filters built-in; slider, checkbox and select. In the code below I am creating and saving the UI elements in order to have a little more control fitting the together.
+
+
+```{r}
+
+date_filter <- filter_slider("date", "Date", sd, column = ~date, 
+                             step = NULL, width = '100%', dragRange = TRUE)
+year_filter <- filter_checkbox("year", "Year", sd, group = ~year, inline = FALSE)
+day_filter <- filter_checkbox("day", "Day of the Week", sd, group = ~DAY_OF_WEE, inline = FALSE)
+severity_filter <- filter_checkbox("sev", "Severity", sd, group = ~SEVERITY, inline = FALSE)
+type_filter <- filter_checkbox("type", "Type", sd, group = ~ACCIDENT_1, inline = FALSE)
+
+```
+
+[Rstudio's leaflet](https://rstudio.github.io/leaflet/) package is the most ubiqitous method for incorporating an interactive map. In this post I am not going to discuss all the options I use but will include the code. But to make the map look and feel how I want, I will `addAwesomeMarkers`, `addPopups` and `addProviderTiles`.
+
+```{r}
+
+map <- leaflet(sd, width = '100%') %>% 
+  
+  addTiles() %>% 
+  addMarkers()
+
+```
+
+
+
+```{r, echo=FALSE}
+
+library(htmltools)
+
+
+tags$div(class="well well-lg",
+         tagList(
+           date_filter,
+           map,
+           bscols(day_filter,
+                  list(year_filter, severity_filter),
+                  type_filter)
+         )
+)
+
+
+
+```
+
+
