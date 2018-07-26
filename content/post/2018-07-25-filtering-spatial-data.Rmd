@@ -27,7 +27,8 @@ library(lubridate)
 
 
 shp <- st_read('~/Documents/Matt/GIS/shp','Crashes_Last_Five_Years', quiet = TRUE) %>%
-  filter(ALCOHOL_RE == 'Yes') %>%
+  filter(ALCOHOL_RE == 'Yes',
+         year > 2013) %>%
   mutate(SEVERITY = trimws(SEVERITY, 'both'),
          icon = plyr::revalue(SEVERITY,
                               c('Serious injury accident' = 'serious',
@@ -69,9 +70,11 @@ type_filter <- filter_checkbox("type", "Type", sd, group = ~ACCIDENT_1, inline =
 
 [Rstudio's leaflet](https://rstudio.github.io/leaflet/) package is the most ubiqitous method for incorporating an interactive map. In this post I am not going to discuss all the options I use but will include the code. But to make the map look and feel how I want, I will `addAwesomeMarkers`, `addPopups` and `addProviderTiles`.
 
-If you look at the code below you can see it is possible to combine multiple icon libraries. This does not make it a good idea. I found it difficult to determine which icons could be used and which could not. The links below show where I found lists of available icons:
+Using custom markers and icons adds a lot of depth to a map and is essential if you have a large number of markers. BUt the are a couple of things to watch out for and the intersection of these two issues makes debugging difficult. 
 
-  * [Glyphicons](https://getbootstrap.com/docs/3.3/components/)
+First if you are matching icons to a column in your data it is best to create a new factor column to match. My initial column (`SEVERITY`) had spaces in the factor levels and this meant the icon labels would not match. 
+
+Second, f you look at the code below you can see it is possible to combine multiple icon libraries. This does not make it a good idea. I found it difficult to determine which icons could be used without an account and which could not. This was particularly true for `glyphicons`; eventually I found [this link](https://getbootstrap.com/docs/3.3/components/).
   
 
 ```{r}
@@ -82,13 +85,19 @@ iconSet = awesomeIconList(
                           iconColor = 'black',
                           library = 'ion'),
   serious = makeAwesomeIcon(markerColor = 'darkred',
-                            icon = 'header', 
-                            iconColor = 'black',
-                            library = 'glyphicon'),
-  other = makeAwesomeIcon(markerColor = 'orange',
                           icon = 'ambulance', 
-                          library = 'fa')
+                          library = 'fa'),
+  serious = makeAwesomeIcon(markerColor = 'orange',
+                            icon = 'plus', 
+                            iconColor = 'black',
+                            library = 'glyphicon')
 )
+
+```
+
+Once you have you icon set you are ready to create a `leaflet` map. Now, I use `leaflet` maps a lot. They are incredibly versatile with a wealth of options (see [documentation](https://rstudio.github.io/leaflet/) to get started). Bu they are also very simple. In the code below you can see my standard setup that I always use as a starting point (excluding `addAwesomeMarkers()`). This means that my maps are consistant and that I can get something done in a few minutes just focusing on the new layer. And here that is the marker layer with icons and a popup. 
+
+```{r}
 
 map <- leaflet(sd, width = '100%') %>% 
   addProviderTiles("CartoDB.Positron", group = 'Default') %>%
@@ -112,16 +121,21 @@ map <- leaflet(sd, width = '100%') %>%
         overlayGroups = 'Accidents',
         options = layersControlOptions(collapsed = TRUE)
       )
+
+
 ```
 
+Now we have all of the elements we need. These could have been added directly to the `rmarkdown` page with each code chunk. 
 
-
-```{r, echo=FALSE}
+```{r, echo=TRUE}
 
 library(htmltools)
 
 tags$div(class="well well-lg",
          tagList(
+           tags$center(tags$h2(
+             'Alcohol Related Motor Vehicle Accidents 2014 - 2017'
+           )),
            date_filter,
            map,
            bscols(day_filter,
