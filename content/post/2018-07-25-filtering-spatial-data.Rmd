@@ -65,11 +65,32 @@ type_filter <- filter_checkbox("type", "Type", sd, group = ~ACCIDENT_1, inline =
 
 ```{r}
 
-map <- leaflet(sd, width = '100%') %>% 
-  
-  addTiles() %>% 
-  addMarkers()
+    iconSet = awesomeIconList(
+      'primary school' = makeAwesomeIcon(markerColor = 'cadetblue',
+                                         icon = 'graduation-cap', library = 'fa'),
+      'secondary school' = makeAwesomeIcon(markerColor = 'darkred',
+                                           icon = 'graduation-cap', library = 'fa'),
+      'aged care' = makeAwesomeIcon(markerColor = 'red',
+                                    icon = 'bed', library = 'fa'),
+      'general hospital' = makeAwesomeIcon(markerColor = 'lightred',
+                                           icon = 'h-square', library = 'fa'),
+      'Other' = makeAwesomeIcon(markerColor = 'grey',
+                                icon = 'question-circle', library = 'fa')
+    )
 
+map <- leaflet(sd, width = '100%') %>% 
+  addProviderTiles("CartoDB.Positron", group = 'Default') %>%
+  addProviderTiles("Esri.WorldImagery", group = 'Aerial') %>%
+  addProviderTiles("OpenStreetMap.Mapnik", group = 'Street') %>%
+  addProviderTiles("OpenTopoMap", group = 'Terrain') %>%
+  addScaleBar('bottomright') %>%
+  addAwesomeMarkers(group = 'Accidents',
+             icon = ~iconSet[icon]) %>%
+  addLayersControl(
+        baseGroups = c("Default", "Aerial", "Street", "Terrain"),
+        overlayGroups = 'Accidents',
+        options = layersControlOptions(collapsed = TRUE)
+      )
 ```
 
 
