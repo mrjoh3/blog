@@ -28,7 +28,12 @@ library(lubridate)
 
 shp <- st_read('~/Documents/Matt/GIS/shp','Crashes_Last_Five_Years', quiet = TRUE) %>%
   filter(ALCOHOL_RE == 'Yes') %>%
-  mutate(date = as.Date(as.character(ACCIDENT_D), '%d/%m/%Y'),
+  mutate(SEVERITY = trimws(SEVERITY, 'both'),
+         icon = plyr::revalue(SEVERITY,
+                              c('Serious injury accident' = 'serious',
+                                'Fatal accident' = 'fatal',
+                                'Other injury accident' = 'other')),
+         date = as.Date(as.character(ACCIDENT_D), '%d/%m/%Y'),
          year = year(date))
 
 sd <- SharedData$new(shp)
@@ -59,24 +64,31 @@ day_filter <- filter_checkbox("day", "Day of the Week", sd, group = ~DAY_OF_WEE,
 severity_filter <- filter_checkbox("sev", "Severity", sd, group = ~SEVERITY, inline = FALSE)
 type_filter <- filter_checkbox("type", "Type", sd, group = ~ACCIDENT_1, inline = FALSE)
 
+
 ```
 
 [Rstudio's leaflet](https://rstudio.github.io/leaflet/) package is the most ubiqitous method for incorporating an interactive map. In this post I am not going to discuss all the options I use but will include the code. But to make the map look and feel how I want, I will `addAwesomeMarkers`, `addPopups` and `addProviderTiles`.
 
+If you look at the code below you can see it is possible to combine multiple icon libraries. This does not make it a good idea. I found it difficult to determine which icons could be used and which could not. The links below show where I found lists of available icons:
+
+  * [Glyphicons](https://getbootstrap.com/docs/3.3/components/)
+  
+
 ```{r}
 
-    iconSet = awesomeIconList(
-      'primary school' = makeAwesomeIcon(markerColor = 'cadetblue',
-                                         icon = 'graduation-cap', library = 'fa'),
-      'secondary school' = makeAwesomeIcon(markerColor = 'darkred',
-                                           icon = 'graduation-cap', library = 'fa'),
-      'aged care' = makeAwesomeIcon(markerColor = 'red',
-                                    icon = 'bed', library = 'fa'),
-      'general hospital' = makeAwesomeIcon(markerColor = 'lightred',
-                                           icon = 'h-square', library = 'fa'),
-      'Other' = makeAwesomeIcon(markerColor = 'grey',
-                                icon = 'question-circle', library = 'fa')
-    )
+iconSet = awesomeIconList(
+  fatal = makeAwesomeIcon(markerColor = 'purple',
+                          icon = 'ios-medical',
+                          iconColor = 'black',
+                          library = 'ion'),
+  serious = makeAwesomeIcon(markerColor = 'darkred',
+                            icon = 'header', 
+                            iconColor = 'black',
+                            library = 'glyphicon'),
+  other = makeAwesomeIcon(markerColor = 'orange',
+                          icon = 'ambulance', 
+                          library = 'fa')
+)
 
 map <- leaflet(sd, width = '100%') %>% 
   addProviderTiles("CartoDB.Positron", group = 'Default') %>%
@@ -85,7 +97,16 @@ map <- leaflet(sd, width = '100%') %>%
   addProviderTiles("OpenTopoMap", group = 'Terrain') %>%
   addScaleBar('bottomright') %>%
   addAwesomeMarkers(group = 'Accidents',
-             icon = ~iconSet[icon]) %>%
+             icon = ~iconSet[icon],
+             # clusterOptions = markerClusterOptions(showCoverageOnHover = TRUE,
+             #                                       zoomToBoundsOnClick = TRUE),
+             popup = ~paste0('<h3>Some Accident Details</h3><br>',
+                             '<b>Type of Accident</b>: ', ACCIDENT_1, '<br>',
+                             '<b>Light Conditions</b>: ', LIGHT_COND, '<br>',
+                             '<b>Road Geometry</b>: ', ROAD_GEOME, "<br>",
+                             '<b>Speed Zone</b>: ', SPEED_ZONE, '<br>',
+                             '<b>Number of People</b>: ', TOTAL_PERS, '<br>',
+                             '<b>Persons Injured or Fatality</b>: ', INJ_OR_FAT)) %>%
   addLayersControl(
         baseGroups = c("Default", "Aerial", "Street", "Terrain"),
         overlayGroups = 'Accidents',
@@ -99,7 +120,6 @@ map <- leaflet(sd, width = '100%') %>%
 
 library(htmltools)
 
-
 tags$div(class="well well-lg",
          tagList(
            date_filter,
@@ -109,8 +129,6 @@ tags$div(class="well well-lg",
                   type_filter)
          )
 )
-
-
 
 ```
 
