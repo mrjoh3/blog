@@ -1,0 +1,157 @@
+---
+title: Filtering Spatial Data with Crosstalk
+author: Matt Johnson
+date: '2018-07-25'
+slug: filtering-spatial-data
+featured: "filter_header.jpg"
+featuredalt: "wilderness"
+featuredpath: "img"
+categories:
+  - spatial
+tags:
+  - crosstalk
+  - leaflet
+  - rstats
+  - sf
+output:
+  blogdown::html_page:
+    toc: false
+    css: "./css/main.css"
+draft: false
+---
+
+In a [previous post](https://mrjoh3.github.io/2018/07/20/animating-spatial-data/) I wanted to look at the daily pattern of motor vehicle accidents across the state of Victoria. What I am really interested in though is the accidents in my local area. 
+
+To do this I am going to use `leaflet`, `sf` to handle all the spatial data and `crosstalk` to filter the data visible in the map. The `crosstalk` package enables a level of interactivity that is usually reserved for more complex server (`shiny`) based applications.
+
+The data is from the [VicRoads open data portal](https://vicroadsopendata-vicroadsmaps.opendata.arcgis.com/datasets/c2a69622ebad42e7baaa8167daa72127_0). The portal has an API but I have previously downloaded the entire data set as a shapefile. There are more than 75 thousand accidents recorded in the data set but I am only looking at accidents related to alcohol for the years 2015 through 2017.
+
+```r
+
+library(sf)
+library(dplyr)
+library(leaflet)
+library(crosstalk)
+library(lubridate)
+library(htmltools)
+
+
+shp <- st_read('~/Documents/Matt/GIS/shp','Crashes_Last_Five_Years', 
+               quiet = TRUE, stringsAsFactors = FALSE) %>%
+  mutate(date = as.Date(as.character(ACCIDENT_D), '%d/%m/%Y'),
+         year = year(date)) %>%
+    filter(ALCOHOL_RE == 'Yes')
+
+sd <- SharedData$new(shp)
+
+
+```
+
+Once the data is imported and cleaned it is inserted into a `crosstalk::SharedData$new()` object. This creates a common data input for all interactive objects such as UI elements and compatible widgets. For a complete list of compatible widgets see the [crosstalk reference page](https://rstudio.github.io/crosstalk/widgets.html).
+
+Am minimal example can be just two lines of additional code which results in a UI slider connected to the date field and a leaflet map. Adjusting the slider will filter the markers visible in the map.
+
+```r
+
+filter_slider("date", "", sd, column=~date, step=10, width=800)
+leaflet(sd) %>% addTiles() %>% addMarkers()
+
+
+```
+
+But let's add some additional layers of interactivity. `Crosstalk` has three UI filters built-in; slider, check-box and select. In the code below I am creating and saving the UI elements in order to have a little more control fitting them together.
+
+
+```r
+
+date_filter <- filter_slider("date", "", sd, column = ~date, 
+                             step = NULL, width = '100%', dragRange = TRUE)
+
+year_filter <- filter_checkbox("year", "Year", sd, group = ~year, 
+                               inline = FALSE)
+
+day_filter <- filter_checkbox("day", "Day of the Week", sd, group = ~DAY_OF_WEE, 
+                              inline = FALSE)
+
+severity_filter <- filter_checkbox("sev", "Severity", sd, group = ~SEVERITY, 
+                                   inline = FALSE)
+
+type_filter <- filter_checkbox("type", "Type", sd, group = ~ACCIDENT_1, 
+                               inline = FALSE)
+
+
+```
+
+[Rstudio's leaflet](https://rstudio.github.io/leaflet/) package is the most ubiquitous method for incorporating an interactive map. In this post I am not going to discuss all the options I use but will include the code. To make the map look and feel how I want, I will use `addPopups` and `addProviderTiles`. 
+
+Originally I intended to include `addAwesomeMarkers`, but with this data set there are too many points for the markers to look good and add meaning to the final map. Instead I will use transparent circle markers to give a sense of density where points overlap.
+
+Now, I use `leaflet` maps a lot. They are incredibly versatile with a wealth of options (see [documentation](https://rstudio.github.io/leaflet/) to get started). They are also very simple. In the code below you can see my standard setup (excluding `addCircleMarkers()`). I save this as a snippet and insert it each time I make a map. This means that my maps are consistent and that I can get something done in a few minutes just focusing on the new layer.
+
+```r
+
+map <- leaflet(sd, width = '100%') %>% 
+  addProviderTiles("CartoDB.Positron", group = 'Default') %>%
+  addProviderTiles("Esri.WorldImagery", group = 'Aerial') %>%
+  addProviderTiles("OpenStreetMap.Mapnik", group = 'Street') %>%
+  addProviderTiles("OpenTopoMap", group = 'Terrain') %>%
+  addScaleBar('bottomright') %>%
+  addCircleMarkers(group = 'Accidents', 
+                   stroke = FALSE, 
+                   opacity = 0.4,
+                   fillColor = ~sapply(SEVERITY, switch, USE.NAMES = FALSE,
+                                    'Fatal accident' = '#a50f15',
+                                    'Serious injury accident' = '#de2d26',
+                                    'Other injury accident' = '#fb6a4a' 
+                                     ),
+                   radius = ~sapply(SEVERITY, switch, USE.NAMES = FALSE,
+                                    'Fatal accident' = 10,
+                                    'Serious injury accident' = 7,
+                                    'Other injury accident' = 5
+                                     ),
+                   popup = ~paste0('<h3>Some Accident Details</h3><br>',
+                                   '<b>Severity</b>: ', SEVERITY, '<br>',
+                                   '<b>Type of Accident</b>: ', ACCIDENT_1, '<br>',
+                                   '<b>Light Conditions</b>: ', LIGHT_COND, '<br>',
+                                   '<b>Road Geometry</b>: ', ROAD_GEOME, "<br>",
+                                   '<b>Speed Zone</b>: ', SPEED_ZONE, '<br>',
+                                   '<b>Number of People</b>: ', TOTAL_PERS, '<br>',
+                                   '<b>Persons Injured or Fatality</b>: ', INJ_OR_FAT)
+                   ) %>%
+  addLayersControl(
+        baseGroups = c("Default", "Aerial", "Street", "Terrain"),
+        overlayGroups = 'Accidents',
+        options = layersControlOptions(collapsed = TRUE)
+      )
+
+
+```
+
+Now we have all of the elements we need. These could have been added directly to the `rmarkdown` page with each code chunk, but wrapping them in some `htmltools` and `crosstalk` tags makes for a slightly cleaner user experience.
+
+```r
+
+tags$div(class="well well-lg",
+         tagList(
+           tags$h2('Alcohol Related Motor Vehicle Accidents 2014 - 2017'),
+           date_filter,
+           map,
+           bscols(day_filter,
+                     list(year_filter,
+                          severity_filter),
+                     type_filter)
+                    )
+            )    
+
+
+```
+
+<script type="text/javascript">
+$("#IframeId").load(function() {
+    $(this).height( $(this).contents().find("body").height() );
+});
+</script>  
+
+<iframe src="../../../../rmd/2018-07-25-filtering-spatial-data_content.html" id="IframeId" style="border:none;width:100%;height:1000px;" ></iframe>
+
+
