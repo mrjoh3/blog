@@ -133,7 +133,7 @@ Now we have all of the elements we need. These could have been added directly to
 
 tags$div(class="well well-lg",
          tagList(
-           tags$h2('Alcohol Related Motor Vehicle Accidents 2014 - 2017'),
+           tags$h2('Alcohol Related Motor Vehicle Accidents 2012 - 2017'),
            date_filter,
            map,
            bscols(day_filter,
