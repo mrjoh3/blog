@@ -18,6 +18,8 @@ linktitle: ''
 draft: true
 ---
 
+# DRAFT
+
 Recently I had to implement an image gallery within a `shiny` application. A simple grid of small images where clicking opens the fullscreen image.  Nothing complicated, but I did have several requirements:
 
   1. The gallery needed to render from a folder of images
