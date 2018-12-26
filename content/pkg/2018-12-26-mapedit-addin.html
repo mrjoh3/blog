@@ -1,0 +1,71 @@
+---
+title: mapedit.addin
+author: Matt Johnson
+date: '2018-12-26'
+slug: mapedit-addin
+categories:
+  - packages
+  - r
+  - spatial
+tags:
+  - mapping
+  - addin
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+type: itemized
+---
+
+
+
+<div id="mapedit.addin" class="section level1">
+<h1>mapedit.addin</h1>
+<p><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="lifecycle" /></a> <a href="https://travis-ci.org/mrjoh3/mapedit.addin"><img src="https://travis-ci.org/mrjoh3/mapedit.addin.svg?branch=master" alt="Build Status" /></a></p>
+<p>The goal of <code>mapedit.addin</code> is to simplify the creation of spatial data by wrapping the <a href="https://github.com/r-spatial/mapedit">mapedit</a> package. As you can see in the code below the <code>mapedit</code> package already makes the process very simple.</p>
+<pre class="r"><code>library(mapview)
+library(mapedit)
+new_spatial_data &lt;- mapview() %&gt;%
+  editMap()</code></pre>
+<p>All <code>mappedit.addin</code> does is wrap this piece of code in an <code>RStudio</code> addin. This means that the process of creating spatial data and saving it to file is completed using only GUI tools. It is also possible to link <code>mapedit.addin</code> to keyboard shortcuts, further simplifying the process (see <a href="https://rstudio.github.io/rstudioaddins/#keyboard-shorcuts">here</a>).</p>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You can install the current version of <code>mapedit.addin</code> from <a href="https://github.com/mrjoh3/mapedit.addin">Github</a> with:</p>
+<pre class="r"><code>devtools::install_github(&quot;mrjoh3/mapedit.addin&quot;)</code></pre>
+</div>
+<div id="usage" class="section level2">
+<h2>Usage</h2>
+<p>This simple addin allows you to interactively create an <code>sf</code> spatial object that can then be saved and used in your code. To use, just open the addin add some geometry to the map and click <code>Done</code> when completed.</p>
+<div class="figure">
+<img src="/pkg/2018-12-26-mapedit-addin_files/mapedit_addin.png" alt="mapedit addin" />
+<p class="caption">mapedit addin</p>
+</div>
+<p>Selecting text within the <code>RStudio</code> IDE will modify the behavior of the addin. Where no text is selected the addin will save an <code>sf</code> object called <code>geom</code> into <code>.GlobalEnv</code>. To save a spatial object to file, the <code>Save</code> switch must be toggled using the addin interface. A file called <code>saved_geometry.geojson</code> will be created in the current working directory. If text is selected in <code>RStudio</code> this will be used for naming both the <code>sf</code> object and the created file.</p>
+</div>
+<div id="adding-objects-to-the-map" class="section level2">
+<h2>Adding objects to the map</h2>
+<p>If the text selected in <code>RStudio</code> IDE is the name of an existing <code>sf</code> object then the addin will add this object to the <code>mapedit</code> map and zoom to its bounds. When a spatial object is passed to the map in this way, any new geometry is added to it using <a href="https://r-spatial.github.io/sf/reference/bind.html">rbind</a>. It is not currently possible to edit existing geometry.</p>
+</div>
+<div id="saving-to-file" class="section level2">
+<h2>Saving to File</h2>
+<p>Spatial objects are saved to file using <code>sf::write_sf</code>. File names can be set by selecting text inside <code>RStudio</code> or via the naming bar at the bottom of the addin. The file naming bar can also be used to add file paths and to change output extensions.</p>
+<div class="figure">
+<img src="/pkg/2018-12-26-mapedit-addin_files/save_file_bar.png" alt="image bar" />
+<p class="caption">image bar</p>
+</div>
+<p>The text seen in the naming bar is passed directly to <code>write_sf</code>. Most file drivers will be guessed by the extension. See <code>sf::st_drivers()</code> or <a href="https://www.gdal.org/ogr_formats.html">OGR formats</a> for details; only <code>.geojson</code> and <code>.shp</code> have been tested.</p>
+<p>Note that the function <code>write_sf</code> is called with options <code>delete_layer = TRUE</code> and <code>delete_dsn = TRUE</code>. This means that existing files with the same name are over-written.</p>
+</div>
+<div id="future" class="section level2">
+<h2>Future</h2>
+<p>Future updates will give the user more control over:</p>
+<ol style="list-style-type: decimal">
+<li>the starting point of the map (currently zooms to world or input object)</li>
+<li>the name of output object (completed)</li>
+<li>file name (completed)</li>
+<li>add more option when saving to file</li>
+<li>edit existing geometry</li>
+</ol>
+</div>
+</div>
