@@ -3,9 +3,7 @@ title: Filtering Spatial Data with Crosstalk
 author: Matt Johnson
 date: '2018-07-25'
 slug: filtering-spatial-data
-featured: "filter_header.jpg"
-featuredalt: "wilderness"
-featuredpath: "img"
+image: img/filter_header.jpg
 categories:
   - spatial
 tags:

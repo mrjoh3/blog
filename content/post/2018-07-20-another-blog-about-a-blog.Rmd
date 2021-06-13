@@ -3,9 +3,7 @@ title: Another blog about a blog
 author: Matt Johnson
 date: '2018-07-21'
 slug: another-blog-about-a-blog
-featured: "snow-header.png"
-featuredalt: "snow walk"
-featuredpath: "img"
+image: "img/snow-header.png"
 categories:
   - web
 tags:
