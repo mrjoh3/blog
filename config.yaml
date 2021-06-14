@@ -44,7 +44,7 @@ params:
         subtitle: musings and code about anything spatial, visual or interesting.
         avatar:
             local: true
-            src: img/logo.jpg
+            src: "img/logo.jpg"
 
     article:
         math: false
@@ -81,9 +81,10 @@ params:
 
         archives:
             limit: 5
+            path: /archives
 
         tagCloud:
-            limit: 10
+            limit: 20
 
     opengraph:
         twitter: 
@@ -121,20 +122,13 @@ menu:
           url: /
           weight: -100
           pre: home
-        - name: About
-          url: /about/
-          identifier: about
-          weight: 2
-        - name: Blog
-          url: /post/
-          identifier: archives
-          weight: 3
         - name: Packages
-          url: /pkg/
-          identifier: fa fa-archive
+          url: /packages/
+          pre: packages
           weight: 4
         - name: Categories
           url: /categories/
+          pre: tag
           identifier: fa fa-sitemap
           weight: 5
 

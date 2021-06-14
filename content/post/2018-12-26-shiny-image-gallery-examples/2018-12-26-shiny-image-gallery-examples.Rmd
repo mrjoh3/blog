@@ -3,6 +3,7 @@ title: Shiny Image Gallery Examples
 author: Matt Johnson
 date: '2018-12-26'
 slug: shiny-image-gallery-examples
+image: 'img/MRJ_2020_DSC9961.png'
 categories:
   - web
 tags:

@@ -3,7 +3,7 @@ title: Filtering Spatial Data with Crosstalk
 author: Matt Johnson
 date: '2018-07-25'
 slug: filtering-spatial-data
-image: img/filter_header.jpg
+image: "img/filter_header.jpg"
 categories:
   - spatial
 tags:

@@ -3,7 +3,7 @@ title: Another blog about a blog
 author: Matt Johnson
 date: '2018-07-21'
 slug: another-blog-about-a-blog
-image: "img/snow-header.png"
+image: "img/MRJ_2020_DSC9204_narrow.png"
 categories:
   - web
 tags:
