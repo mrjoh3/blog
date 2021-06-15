@@ -14,6 +14,7 @@ featured: ''
 featuredalt: ''
 featuredpath: ''
 linktitle: ''
+draft: true
 ---
 
 
