@@ -17,6 +17,7 @@ featuredalt: ''
 featuredpath: ''
 linktitle: ''
 draft: true
+self_contained: true
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
@@ -24,7 +25,7 @@ draft: true
 
 <div id="draft" class="section level1">
 <h1>DRAFT</h1>
-<p>Recently I had to implement an image gallery within a <code>shiny</code> application. A simple grid of small images where clicking opens the fullscreen image. Nothing complicated, but I did have several requirements:</p>
+<p>Some time ago I had to implement an image gallery within a <code>shiny</code> application. A simple grid of small thumbnail images where clicking opens the full image. Nothing complicated, but I did have several requirements:</p>
 <ol style="list-style-type: decimal">
 <li>The gallery needed to render from a folder of images</li>
 <li>The gallery interface and thumbnails needed to be responsive</li>
@@ -56,63 +57,63 @@ lightbox_gallery(images,
 <div style="display: TRUE;">
 <div class="card-deck">
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181019_131513_230.jpg" data-lightbox="gallery" data-title="../../IMG_20181019_131513_230.jpg - IMG - 17823 - 131513 - 230 - Vvm - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181019_131513_230.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181019_131513_230.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181019_131513_230.jpg - IMG - 17823 - 131513 - 230 - Vvm - 85558">
+<img class="card-img-top" src="../../img/IMG_20181019_131513_230.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181022_160737_185.jpg" data-lightbox="gallery" data-title="../../IMG_20181022_160737_185.jpg - IMG - 17826 - 160737 - 185 - MQB - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181022_160737_185.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181022_160737_185.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181022_160737_185.jpg - IMG - 17826 - 160737 - 185 - MQB - 85558">
+<img class="card-img-top" src="../../img/IMG_20181022_160737_185.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181024_180354_405.jpg" data-lightbox="gallery" data-title="../../IMG_20181024_180354_405.jpg - IMG - 17828 - 180354 - 405 - rQV - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181024_180354_405.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181024_180354_405.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181024_180354_405.jpg - IMG - 17828 - 180354 - 405 - rQV - 85558">
+<img class="card-img-top" src="../../img/IMG_20181024_180354_405.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181024_180354_425.jpg" data-lightbox="gallery" data-title="../../IMG_20181024_180354_425.jpg - IMG - 17828 - 180354 - 425 - mZR - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181024_180354_425.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181024_180354_425.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181024_180354_425.jpg - IMG - 17828 - 180354 - 425 - mZR - 85558">
+<img class="card-img-top" src="../../img/IMG_20181024_180354_425.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181024_180354_432.jpg" data-lightbox="gallery" data-title="../../IMG_20181024_180354_432.jpg - IMG - 17828 - 180354 - 432 - 3LY - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181024_180354_432.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181024_180354_432.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181024_180354_432.jpg - IMG - 17828 - 180354 - 432 - 3LY - 85558">
+<img class="card-img-top" src="../../img/IMG_20181024_180354_432.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181024_183858_737.jpg" data-lightbox="gallery" data-title="../../IMG_20181024_183858_737.jpg - IMG - 17828 - 183858 - 737 - WK4 - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181024_183858_737.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181024_183858_737.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181024_183858_737.jpg - IMG - 17828 - 183858 - 737 - WK4 - 85558">
+<img class="card-img-top" src="../../img/IMG_20181024_183858_737.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181025_183729_821.jpg" data-lightbox="gallery" data-title="../../IMG_20181025_183729_821.jpg - IMG - 17829 - 183729 - 821 - opR - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181025_183729_821.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181025_183729_821.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181025_183729_821.jpg - IMG - 17829 - 183729 - 821 - opR - 85558">
+<img class="card-img-top" src="../../img/IMG_20181025_183729_821.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181026_142940_957.jpg" data-lightbox="gallery" data-title="../../IMG_20181026_142940_957.jpg - IMG - 17830 - 142940 - 957 - xJEy - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181026_142940_957.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181026_142940_957.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181026_142940_957.jpg - IMG - 17830 - 142940 - 957 - xJEy - 85558">
+<img class="card-img-top" src="../../img/IMG_20181026_142940_957.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181119_172905_259.jpg" data-lightbox="gallery" data-title="../../IMG_20181119_172905_259.jpg - IMG - 17854 - 172905 - 259 - zMW - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181119_172905_259.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181119_172905_259.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181119_172905_259.jpg - IMG - 17854 - 172905 - 259 - zMW - 85558">
+<img class="card-img-top" src="../../img/IMG_20181119_172905_259.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181213_094058_994.jpg" data-lightbox="gallery" data-title="../../IMG_20181213_094058_994.jpg - IMG - 17878 - 094058 - 994 - laaX - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181213_094058_994.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181213_094058_994.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181213_094058_994.jpg - IMG - 17878 - 094058 - 994 - laaX - 85558">
+<img class="card-img-top" src="../../img/IMG_20181213_094058_994.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181215_090527_868.jpg" data-lightbox="gallery" data-title="../../IMG_20181215_090527_868.jpg - IMG - 17880 - 090527 - 868 - LzX - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181215_090527_868.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181215_090527_868.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181215_090527_868.jpg - IMG - 17880 - 090527 - 868 - LzX - 85558">
+<img class="card-img-top" src="../../img/IMG_20181215_090527_868.jpg" width="80px" height="auto"/>
 </a>
 </div>
 <div data-type="template" class="card">
-<a id="535ae" href="img/../../IMG_20181224_194148_000.jpg" data-lightbox="gallery" data-title="../../IMG_20181224_194148_000.jpg - IMG - 17889 - 194148 - 000 - 5vJ - 535ae">
-<img class="card-img-top" src="img/../../IMG_20181224_194148_000.jpg" width="80px" height="auto"/>
+<a id="85558" href="../../img/IMG_20181224_194148_000.jpg" data-lightbox="gallery" data-title="../../img/IMG_20181224_194148_000.jpg - IMG - 17889 - 194148 - 000 - 5vJ - 85558">
+<img class="card-img-top" src="../../img/IMG_20181224_194148_000.jpg" width="80px" height="auto"/>
 </a>
 </div>
 </div>

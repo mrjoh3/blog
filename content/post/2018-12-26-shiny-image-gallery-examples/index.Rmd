@@ -17,11 +17,12 @@ featuredalt: ''
 featuredpath: ''
 linktitle: ''
 draft: true
+self_contained: true
 ---
 
 # DRAFT
 
-Recently I had to implement an image gallery within a `shiny` application. A simple grid of small images where clicking opens the fullscreen image.  Nothing complicated, but I did have several requirements:
+Some time ago I had to implement an image gallery within a `shiny` application. A simple grid of small thumbnail images where clicking opens the full image.  Nothing complicated, but I did have several requirements:
 
   1. The gallery needed to render from a folder of images
   2. The gallery interface and thumbnails needed to be responsive
@@ -64,8 +65,41 @@ lightbox_gallery(images,
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # small hack for use in blogdown site
+library(htmltools)
+library(glue)
+library(fs)
+
+lightbox_temp <- function (df, gallery, css, width = 80, display = "block") {
+  dir.create("www")
+  if (missing(css)) {
+    css <- file.path(system.file("css", package = "gallerier"), 
+      "styles.css")
+  }
+  if (!(dir.exists("www/lightbox-2.10.0"))) {
+    fs::dir_copy(system.file("js/lightbox-2.10.0", package = "gallerier"), 
+      "www/lightbox-2.10.0")
+  }
+  if (!("uid" %in% colnames(df))) 
+    df$uid <- strtrim(digest::sha1(df$src), 5)
+  tags$div(style = sprintf("display: %s;", display), tagList(tags$head(tags$link(rel = "stylesheet", 
+    type = "text/css", href = "lightbox-2.10.0/lightbox.min.css")), 
+    tags$div(class = "card-deck", lapply(seq_len(nrow(df)), 
+      function(i) {
+        tags$div(`data-type` = "template", class = "card", 
+          tags$a(id = df$uid[i], href = paste0(#"img/", 
+                                               df$src[i]), 
+                 `data-lightbox` = gallery, 
+                 `data-title` = glue_collapse(df[i, ], sep = " - "), 
+                 tags$img(class = "card-img-top", 
+                          src = paste0(#"img/", 
+                                       df$src[i]), width = glue("{width}px"), 
+            height = "auto")))
+      })), includeScript("www/lightbox-2.10.0/lightbox.min.js"), 
+    includeCSS(css)))
+}
+
 images %>%
-  mutate(src = paste0('../../', src)) %>%
-  lightbox_gallery(., 'gallery', 
+  mutate(src = paste0('../../img/', src)) %>%
+  lightbox_temp(., 'gallery', 
                    display = TRUE)
 ```

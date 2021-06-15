@@ -3,6 +3,7 @@ title: Updating a Blog Theme
 author: 'Matt Johnson'
 date: '2021-06-14'
 slug: updating-a-blog-theme
+image: "img/DSCN1968_edited-1_20070804_165511_002.jpg"
 categories:
   - web
 tags:
@@ -36,3 +37,6 @@ files like "logo" may need to be added to the theme!!
 get widgets working...
 
 add some more content
+
+
+## Add comments
