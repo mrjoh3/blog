@@ -1,8 +1,22 @@
 ---
-output: github_document
----
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+title: ggtrack
+author: Matt Johnson
+date: '2021-06-10'
+slug: ggtrack-package
+categories:
+  - packages
+  - r
+  - data visualisation
+tags:
+  - ggplot2
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+format: ''
+link: ''
+linktitle: ''
+type: itemized
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(

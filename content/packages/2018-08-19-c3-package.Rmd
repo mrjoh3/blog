@@ -1,19 +1,19 @@
 ---
 title: "c3"
+date: "2018-08-19"
 categories:
   - R
   - data visualisation
 tags:
   - htmlwidgets
-output: 
-  rmarkdown::html_vignette:
-    fig_caption: yes
-    self_contained: yes
-    toc: no
-vignette: >
-  %\VignetteIndexEntry{Basic Use}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+format: ''
+link: ''
+linktitle: ''
+type: itemized
 ---
 
 ```{r setup, warning=FALSE, message=FALSE, echo=FALSE}
