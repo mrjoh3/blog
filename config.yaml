@@ -1,4 +1,4 @@
-baseurl: "/"
+baseurl: "https://mrjoh3.github.io/"
 languageCode: en-us
 theme: stack
 paginate: 5
