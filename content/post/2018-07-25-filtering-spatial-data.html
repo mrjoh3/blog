@@ -1,0 +1,125 @@
+---
+title: Filtering Spatial Data with Crosstalk
+author: Matt Johnson
+date: '2018-07-25'
+lastUpdated: "2021-06-18"
+slug: filtering-spatial-data
+image: "img/filter_header.jpg"
+categories:
+  - spatial
+tags:
+  - crosstalk
+  - leaflet
+  - rstats
+  - sf
+draft: false
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<link rel="stylesheet" href="../../highlight/a11y-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<p>In a <a href="https://mrjoh3.github.io/2018/07/20/animating-spatial-data/">previous post</a> I wanted to look at the daily pattern of motor vehicle accidents across the state of Victoria. What I am really interested in though is the accidents in my local area.</p>
+<p>To do this I am going to use <code>leaflet</code>, <code>sf</code> to handle all the spatial data and <code>crosstalk</code> to filter the data visible in the map. The <code>crosstalk</code> package enables a level of interactivity that is usually reserved for more complex server (<code>shiny</code>) based applications.</p>
+<p>The data is from the <a href="https://vicroadsopendata-vicroadsmaps.opendata.arcgis.com/datasets/c2a69622ebad42e7baaa8167daa72127_0">VicRoads open data portal</a>. The portal has an API but I have previously downloaded the entire data set as a shapefile. There are more than 75 thousand accidents recorded in the data set but I am only looking at accidents related to alcohol for the years 2015 through 2017.</p>
+<pre class="r"><code>
+library(sf)
+library(dplyr)
+library(leaflet)
+library(crosstalk)
+library(lubridate)
+library(htmltools)
+
+
+shp &lt;- st_read(&#39;~/Documents/Matt/GIS/shp&#39;,&#39;Crashes_Last_Five_Years&#39;, 
+               quiet = TRUE, stringsAsFactors = FALSE) %&gt;%
+  mutate(date = as.Date(as.character(ACCIDENT_D), &#39;%d/%m/%Y&#39;),
+         year = year(date)) %&gt;%
+    filter(ALCOHOL_RE == &#39;Yes&#39;)
+
+sd &lt;- SharedData$new(shp)
+
+</code></pre>
+<p>Once the data is imported and cleaned it is inserted into a <code>crosstalk::SharedData$new()</code> object. This creates a common data input for all interactive objects such as UI elements and compatible widgets. For a complete list of compatible widgets see the <a href="https://rstudio.github.io/crosstalk/widgets.html">crosstalk reference page</a>.</p>
+<p>Am minimal example can be just two lines of additional code which results in a UI slider connected to the date field and a leaflet map. Adjusting the slider will filter the markers visible in the map.</p>
+<pre class="r"><code>
+filter_slider(&quot;date&quot;, &quot;&quot;, sd, column=~date, step=10, width=800)
+leaflet(sd) %&gt;% addTiles() %&gt;% addMarkers()
+
+</code></pre>
+<p>But let’s add some additional layers of interactivity. <code>Crosstalk</code> has three UI filters built-in; slider, check-box and select. In the code below I am creating and saving the UI elements in order to have a little more control fitting them together.</p>
+<pre class="r"><code>
+date_filter &lt;- filter_slider(&quot;date&quot;, &quot;&quot;, sd, column = ~date, 
+                             step = NULL, width = &#39;100%&#39;, dragRange = TRUE)
+
+year_filter &lt;- filter_checkbox(&quot;year&quot;, &quot;Year&quot;, sd, group = ~year, 
+                               inline = FALSE)
+
+day_filter &lt;- filter_checkbox(&quot;day&quot;, &quot;Day of the Week&quot;, sd, group = ~DAY_OF_WEE, 
+                              inline = FALSE)
+
+severity_filter &lt;- filter_checkbox(&quot;sev&quot;, &quot;Severity&quot;, sd, group = ~SEVERITY, 
+                                   inline = FALSE)
+
+type_filter &lt;- filter_checkbox(&quot;type&quot;, &quot;Type&quot;, sd, group = ~ACCIDENT_1, 
+                               inline = FALSE)
+
+</code></pre>
+<p><a href="https://rstudio.github.io/leaflet/">Rstudio’s leaflet</a> package is the most ubiquitous method for incorporating an interactive map. In this post I am not going to discuss all the options I use but will include the code. To make the map look and feel how I want, I will use <code>addPopups</code> and <code>addProviderTiles</code>.</p>
+<p>Originally I intended to include <code>addAwesomeMarkers</code>, but with this data set there are too many points for the markers to look good and add meaning to the final map. Instead I will use transparent circle markers to give a sense of density where points overlap.</p>
+<p>Now, I use <code>leaflet</code> maps a lot. They are incredibly versatile with a wealth of options (see <a href="https://rstudio.github.io/leaflet/">documentation</a> to get started). They are also very simple. In the code below you can see my standard setup (excluding <code>addCircleMarkers()</code>). I save this as a snippet and insert it each time I make a map. This means that my maps are consistent and that I can get something done in a few minutes just focusing on the new layer.</p>
+<pre class="r"><code>
+map &lt;- leaflet(sd, width = &#39;100%&#39;) %&gt;% 
+  addProviderTiles(&quot;CartoDB.Positron&quot;, group = &#39;Default&#39;) %&gt;%
+  addProviderTiles(&quot;Esri.WorldImagery&quot;, group = &#39;Aerial&#39;) %&gt;%
+  addProviderTiles(&quot;OpenStreetMap.Mapnik&quot;, group = &#39;Street&#39;) %&gt;%
+  addProviderTiles(&quot;OpenTopoMap&quot;, group = &#39;Terrain&#39;) %&gt;%
+  addScaleBar(&#39;bottomright&#39;) %&gt;%
+  addCircleMarkers(group = &#39;Accidents&#39;, 
+                   stroke = FALSE, 
+                   opacity = 0.4,
+                   fillColor = ~sapply(SEVERITY, switch, USE.NAMES = FALSE,
+                                    &#39;Fatal accident&#39; = &#39;#a50f15&#39;,
+                                    &#39;Serious injury accident&#39; = &#39;#de2d26&#39;,
+                                    &#39;Other injury accident&#39; = &#39;#fb6a4a&#39; 
+                                     ),
+                   radius = ~sapply(SEVERITY, switch, USE.NAMES = FALSE,
+                                    &#39;Fatal accident&#39; = 10,
+                                    &#39;Serious injury accident&#39; = 7,
+                                    &#39;Other injury accident&#39; = 5
+                                     ),
+                   popup = ~paste0(&#39;&lt;h3&gt;Some Accident Details&lt;/h3&gt;&lt;br&gt;&#39;,
+                                   &#39;&lt;b&gt;Severity&lt;/b&gt;: &#39;, SEVERITY, &#39;&lt;br&gt;&#39;,
+                                   &#39;&lt;b&gt;Type of Accident&lt;/b&gt;: &#39;, ACCIDENT_1, &#39;&lt;br&gt;&#39;,
+                                   &#39;&lt;b&gt;Light Conditions&lt;/b&gt;: &#39;, LIGHT_COND, &#39;&lt;br&gt;&#39;,
+                                   &#39;&lt;b&gt;Road Geometry&lt;/b&gt;: &#39;, ROAD_GEOME, &quot;&lt;br&gt;&quot;,
+                                   &#39;&lt;b&gt;Speed Zone&lt;/b&gt;: &#39;, SPEED_ZONE, &#39;&lt;br&gt;&#39;,
+                                   &#39;&lt;b&gt;Number of People&lt;/b&gt;: &#39;, TOTAL_PERS, &#39;&lt;br&gt;&#39;,
+                                   &#39;&lt;b&gt;Persons Injured or Fatality&lt;/b&gt;: &#39;, INJ_OR_FAT)
+                   ) %&gt;%
+  addLayersControl(
+        baseGroups = c(&quot;Default&quot;, &quot;Aerial&quot;, &quot;Street&quot;, &quot;Terrain&quot;),
+        overlayGroups = &#39;Accidents&#39;,
+        options = layersControlOptions(collapsed = TRUE)
+      )
+
+</code></pre>
+<p>Now we have all of the elements we need. These could have been added directly to the <code>rmarkdown</code> page with each code chunk, but wrapping them in some <code>htmltools</code> and <code>crosstalk</code> tags makes for a slightly cleaner user experience.</p>
+<pre class="r"><code>
+tags$div(class=&quot;well well-lg&quot;,
+         tagList(
+           tags$h2(&#39;Alcohol Related Motor Vehicle Accidents 2012 - 2017&#39;),
+           date_filter,
+           map,
+           bscols(day_filter,
+                     list(year_filter,
+                          severity_filter),
+                     type_filter)
+                    )
+            )    
+
+</code></pre>
+<iframe allowtransparency="true" src="../../rmd/2018-07-25-filtering-spatial-data_content.html" id="IframeId" style="border:none;width:100%;height:1000px;background-color:#424242">
+</iframe>

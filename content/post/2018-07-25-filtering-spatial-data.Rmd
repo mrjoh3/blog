@@ -2,6 +2,7 @@
 title: Filtering Spatial Data with Crosstalk
 author: Matt Johnson
 date: '2018-07-25'
+lastUpdated: "`r format(Sys.Date(), '%Y-%m-%d')`"
 slug: filtering-spatial-data
 image: "img/filter_header.jpg"
 categories:
@@ -11,12 +12,12 @@ tags:
   - leaflet
   - rstats
   - sf
-output:
-  blogdown::html_page:
-    toc: false
-    css: "./css/main.css"
 draft: false
 ---
+
+<link rel="stylesheet" href="../../highlight/a11y-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
 
 In a [previous post](https://mrjoh3.github.io/2018/07/20/animating-spatial-data/) I wanted to look at the daily pattern of motor vehicle accidents across the state of Victoria. What I am really interested in though is the accidents in my local area. 
 
@@ -144,12 +145,8 @@ tags$div(class="well well-lg",
 
 ```
 
-<script type="text/javascript">
-$("#IframeId").load(function() {
-    $(this).height( $(this).contents().find("body").height() );
-});
-</script>  
+ 
 
-<iframe src="../../../../rmd/2018-07-25-filtering-spatial-data_content.html" id="IframeId" style="border:none;width:100%;height:1000px;" ></iframe>
+<iframe allowtransparency="true" src="../../rmd/2018-07-25-filtering-spatial-data_content.html" id="IframeId" style="border:none;width:100%;height:1000px;background-color:#424242" ></iframe>
 
 
