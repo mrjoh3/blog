@@ -8,6 +8,6 @@ featuredalt = ""
 featuredpath = ""
 linktitle = ""
 title = ""
-type = "pkg"
+type = "packages"
 
 +++
