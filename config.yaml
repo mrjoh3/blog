@@ -77,15 +77,15 @@ params:
     opengraph:
         twitter: 
             # Your Twitter username
-            site: "@mrjoh3"
+            site: "mrjoh3"
             # Available values: summary, summary_large_image
             card: summary_large_image
 
     defaultImage:
         opengraph:
-            enabled: false
-            local: false
-            src:
+            enabled: true
+            local: true
+            src: "img/logo.jpg"
 
     colorScheme:
         # Display toggle
@@ -117,8 +117,14 @@ menu:
         - name: Categories
           url: /categories/
           pre: tag
-          identifier: fa fa-sitemap
           weight: 5
+        - name: Github
+          url: https://github.com/mrjoh3
+          pre: github
+        - name: Twitter
+          url: https://twitter.com/mrjoh3
+          pre: twitter
+        
 
 related:
     includeNewer: true
