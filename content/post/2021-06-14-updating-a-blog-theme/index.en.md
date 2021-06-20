@@ -6,6 +6,7 @@ slug: updating-a-blog-theme
 image: "img/DSCN1968_edited-1_20070804_165511_002.jpg"
 categories:
   - web
+  - R
 tags:
   - blogdown
   - hugo

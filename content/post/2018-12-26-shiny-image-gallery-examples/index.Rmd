@@ -7,6 +7,7 @@ slug: shiny-image-gallery-examples
 image: 'img/MRJ_2020_DSC9961.png'
 categories:
   - web
+  - R
 tags:
   - shiny
   - gallery

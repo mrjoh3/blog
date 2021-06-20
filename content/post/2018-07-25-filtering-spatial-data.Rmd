@@ -7,6 +7,7 @@ slug: filtering-spatial-data
 image: "img/filter_header.jpg"
 categories:
   - spatial
+  - R
 tags:
   - crosstalk
   - leaflet

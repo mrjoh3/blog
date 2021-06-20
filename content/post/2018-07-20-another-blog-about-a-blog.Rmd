@@ -6,6 +6,7 @@ slug: another-blog-about-a-blog
 image: "img/MRJ_2020_DSC9204_narrow.png"
 categories:
   - web
+  - R
 tags:
   - blogdown
   - hugo
