@@ -30,16 +30,16 @@ Some time ago I had to implement an image gallery within a `shiny` application. 
   3. The gallery needed to link to other `shiny` UI
   4. Images come from one location, no need for generating thumbnails
   
-There is a wide variety of javascript image gallery implementations. To start with I looked at  [Lightbox](https://lokeshdhakar.com/projects/lightbox2/) and [PhotoSwipe](http://photoswipe.com/). `Lightbox` was the easiest to use and many other `JS` libraries are based on it. `Photoswipe` is also very popular with a very nice UI, zoom and touch integration plus an extensive API. Both are available under MIT licences. Unfortunately my javascript is limited and I did not have enough time to get more than the most basic `Photoswipe` gallery to work. But, the `Lightbox` gallery works very nicely.
+There is a wide variety of javascript image gallery implementations. To start with I looked at  [Lightbox](https://lokeshdhakar.com/projects/lightbox2/) and [PhotoSwipe](http://photoswipe.com/). `Lightbox` was the easiest to use and many other `JS` libraries are based on it. `Photoswipe` is also very popular with a very nice UI, zoom and touch integration plus an extensive API. Both are available under MIT licences. Unfortunately my javascript is limited and I did not have enough time to get more than the most basic `Photoswipe` gallery to work. But, the `Lightbox` gallery works very nicely. Here, I will focus on the `Lightbox` implementation.
 
 This work was eventually built into a [shiny app](https://mrjoh3.shinyapps.io/shiny-gallery-example/) so you can see the galleries in action. I have also wrapped the code in the [gallerier](https://github.com/mrjoh3/gallerier) package. `Gallerier` can be used in both `shiny` and `rmarkdown` documents. Code for the original `shiny` app is on [Github](https://github.com/mrjoh3/shiny-gallery-example).
 
-The `gallerier` is very much a work in progress and more proof-of-concept than usable package. Please us it if you wish and let me know how you get on. The package also has some other functionality for creating card packs, but I will discuss this in a separate post.
+The `gallerier` is very much a work in progress and more proof-of-concept than usable package. Please use it if you wish and let me know how you get on. The package also has some other functionality for creating [card packs](https://www.w3schools.com/howto/howto_css_cards.asp), but I will discuss this in a separate post.
 
 
 ## Using Lightbox in R
 
-The great thing about Lightbox is that the setup is relatively easy. For a gallery all it requires is the creation of a structured "image set". The "image set" defines the location of the images and any metadata you wish to display. If you look at the [Lightbox documentation](https://lokeshdhakar.com/projects/lightbox2/#getting-started) the "image set" is a group of image links that look like this:
+The great thing about `Lightbox` is that the setup is relatively easy. For a gallery all it requires is the creation of a structured "image set". The "image set" defines the location of the images and any metadata you wish to display. If you look at the [Lightbox documentation](https://lokeshdhakar.com/projects/lightbox2/#getting-started) the "image set" is a group of image links that look like this:
 
 ```html
 <a href="images/image-2.jpg" data-lightbox="roadtrip">Image #2</a>
@@ -47,7 +47,7 @@ The great thing about Lightbox is that the setup is relatively easy. For a galle
 <a href="images/image-4.jpg" data-lightbox="roadtrip">Image #4</a>
 ```
 
-To to recreate this in `R` add all the required details to a `data.frame`, then iterate over the rows and using `htmltools` to create a `taglist`. 
+To to recreate this in `R`, add all the required details to a `data.frame`. Then iterate over the rows and using `htmltools`  create a `taglist`. 
 
 ```r
 tagList(
@@ -87,14 +87,15 @@ images <- data.frame(src = list.files('www/img')) %>%
          key = hashids::encode(1e3 + as.integer(msec), 
                                hashid_settings(salt = 'this is my salt')))
 
+knitr::kable(head(images))
 ```
 
-Then we pass the `data.frame` to the `gallerier::lightbox_gallery()` function and tell it where the images can be found relative to the final `HTML` page. This can sometimes take a couple of goes to get right depending on which framework you are using. For `shiny` the images will need to be in a `www/img` folder. But the `www` is dropped within shiny so the referenced path would be `img/`. For `rmarkdown` the `www` does not get dropped, so `path='www/img'`. This blog is created using `blogdown` and so the images need to be in the `static` folder, but are then referenced as `path='../../img/'`.
+Then we pass the `data.frame` to `gallerier::lightbox_gallery()` and tell it where the images can be found relative to the final `HTML` page. This can sometimes take a couple of goes to get right depending on which framework you are using. For `shiny` the images will need to be in a `www/img` folder. But the `www` is dropped within shiny so the referenced path would be `img/`. For `rmarkdown` the `www` does not get dropped, so `path='www/img'`. This blog is created using `blogdown` and so the images need to be in the `static` folder, but are then referenced as `path='../../img/'`.
 
 
 ## Some Gotcha's
 
-As indicated above, referring to the image location can be quite variable. This is also the case for referring to the required `JavaScript` and `CSS` files. In `shiny` the `gallerier::lightbox_gallery()` embeds all the required files, but this does not work in `rmarkdown`. At least, I have not managed to get it to work. What does work is explicitly referencing the files at the top of the `.Rmd` file.
+As indicated above, referring to the image location can be quite variable. This is also the case for referring to the required `JavaScript` and `CSS` files. In `shiny`, `gallerier::lightbox_gallery()` embeds all the required files, but this does not work in `rmarkdown`. At least, I have not managed to get it to work. What does work is explicitly referencing the files at the top of the `.Rmd` file.
 
 ```html
 <link rel="stylesheet" href="www/lightbox-2-2.11.3/css/lightbox.min.css">
