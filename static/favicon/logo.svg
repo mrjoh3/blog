@@ -7,17 +7,17 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
+   width="125.54805mm"
+   height="125.54805mm"
+   viewBox="0 0 125.54805 125.54805"
    version="1.1"
    id="svg8"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
-   sodipodi:docname="mrj.svg">
+   sodipodi:docname="logo.svg">
   <defs
      id="defs2">
     <filter
-       style="color-interpolation-filters:sRGB;"
+       style="color-interpolation-filters:sRGB"
        inkscape:label="Drop Shadow"
        id="filter945">
       <feFlood
@@ -49,7 +49,7 @@
          id="feComposite943" />
     </filter>
     <filter
-       style="color-interpolation-filters:sRGB;"
+       style="color-interpolation-filters:sRGB"
        inkscape:label="Drop Shadow"
        id="filter981">
       <feFlood
@@ -89,8 +89,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="402.00223"
-     inkscape:cy="517.51733"
+     inkscape:cx="303.62459"
+     inkscape:cy="170.7122"
      inkscape:document-units="mm"
      inkscape:current-layer="text12"
      inkscape:document-rotation="0"
@@ -108,14 +108,15 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-26.029083,-81.068077)">
     <g
        aria-label="MRJ"
        id="text12"

@@ -1,0 +1,31 @@
+---
+title: Growing a Data Analytics Capability
+author: Matt Johnson
+date: '2021-06-20'
+slug: growing-a-data-analytics-capability
+categories:
+  - R
+tags: 
+  - analytics
+  - capability
+  - work flow
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+draft: true
+---
+
+
+nobody cares about your P value. They only want to know if the model works or not
+
+validation needs to be commensurate with the consequence of getting things wrong
+
+Also need to think about consequences as that relate to false positive or negative, who is burdened by these and is that ok
+  could use robo debt as example burden of false positive put onto sensitive group
+  
+process documentation and workflow makes a team as opposed to a group of individuals working on similar issues
+
+organisational enablers: known data quality, data engineering, project management, licence to fail
+
