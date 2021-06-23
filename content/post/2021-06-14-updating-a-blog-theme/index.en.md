@@ -96,7 +96,7 @@ This could be added easily enough to each post that needs syntax highlighting bu
 .right {
   display: block;
   float: right;
-  width: 30%;
+  width: 20%;
 }
 </style>
 
@@ -104,6 +104,14 @@ This could be added easily enough to each post that needs syntax highlighting bu
 
 I used the `custom.html` file to include all the links needed to add a `favicon` to my site. The `svg` for the `favicon` was created in `Inkscape` then I used [RealFaviconGenerator](https://realfavicongenerator.net/) to convert to a `favicon`. This is the same service behind pkgdown's [pkgdown::build_favicon()](https://pkgdown.r-lib.org/reference/build_favicons.html) function.
 
+The last change to the theme I made (for now) was to add the read time for each article at the top of each post. Reading time is available in the Hugo API via `.ReadingTime`. After looking through all the files in the theme, I found that the `themes/hugo-theme-stack/layouts/partials/article/components/details` contained all of the page information such as title, description, and publish date. After finding the place to put the reading time I only need to add the following two `span` tags to get a book icon and the calculated read time.
+
+```html
+<span>{{ partial "helper/icon" "book" }}</span>
+<span class="meta__text post-word-count">{{ .ReadingTime }} min read</span>
+```
+
+The book icon was not a standard part of the theme. Luckily all of the theme icons have been generated using [Tabler Icons](https://tablericons.com/) and so it was easy create one that matched perfectly.
 
 
 
