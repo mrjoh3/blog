@@ -1,6 +1,7 @@
 ---
 title: Filtering Spatial Data with Crosstalk
 author: Matt Johnson
+description: The crosstalk package enables the linking of htmlwidgets and datatables within an Rmarkdown file.
 date: '2018-07-25'
 lastUpdated: "`r format(Sys.Date(), '%Y-%m-%d')`"
 slug: filtering-spatial-data
