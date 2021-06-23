@@ -14,7 +14,7 @@ description: 'Updating the Hugo theme on a blogdown site can be intimidating, th
 draft: true
 ---
 
-In an effort to resurrect my long neglected `blogdown` site, I decided to switch to a new theme. It is possible to use `blogdown::install_theme()` to get you started adding a new theme. But I wanted to do the update manually and then start to modify the theme to suit my needs. For `R` coders sometimes other languages and interacting with `HTML` and `CSS` can be intimidating but the results are very satisfying. I also think that tools like `rmarkdown` and `shiny` have forced us to know enough about web languages to work things out. This is more a record of what I did and some of the small gotcha's I encountered.
+In an effort to resurrect my long neglected `blogdown` site, I decided to switch to a new theme. It is possible to use `blogdown::install_theme()` to get you started adding a new theme. But I wanted to do the update manually and then start to modify the theme to suit my needs. For `R` coders sometimes other languages and interacting with `HTML` and `CSS` can be intimidating but the results are very satisfying. I also think that tools like `rmarkdown` and `shiny` have forced us to know enough about web languages to work things out. This post is a record of the steps I took to change to and then modify a new Hugo theme, plus some of the small gotcha's I encountered along the way.
 
 
 ## First find a good theme 
