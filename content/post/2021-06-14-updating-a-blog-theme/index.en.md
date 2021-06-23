@@ -1,5 +1,5 @@
 ---
-title: Updating a Blog Theme
+title: Switching to and modifying a Hugo Blogdown Theme
 author: 'Matt Johnson'
 date: '2021-06-14'
 slug: updating-a-blog-theme
@@ -10,13 +10,11 @@ categories:
 tags:
   - blogdown
   - hugo
-description: 'Updating the Hugo theme on a blogdown site can be intimidating, the trick is to pick a theme with good documentation and an example site.'
+description: 'Updating the Hugo theme on a blogdown site can be intimidating, the trick is to pick a theme with good documentation and an example site. Then you can use the example site to work out how to adjust the theme to your needs'
 draft: true
 ---
 
-
-
-In an effort to resurrect my long neglected `blogdown` site, I decided to switch to a new theme. There is already some excellent documentation around, especially in the [blogdown](https://bookdown.org/yihui/blogdown/other-themes.html#other-themes) book. I will not try to recreate any of that here. This is more a record of what I did and some of the small gotcha's I encountered.
+In an effort to resurrect my long neglected `blogdown` site, I decided to switch to a new theme. It is possible to use `blogdown::install_theme()` to get you started adding a new theme. But I wanted to do the update manually and then start to modify the theme to suit my needs. For `R` coders sometimes other languages and interacting with `HTML` and `CSS` can be intimidating but the results are very satisfying. I also think that tools like `rmarkdown` and `shiny` have forced us to know enough about web languages to work things out. This is more a record of what I did and some of the small gotcha's I encountered.
 
 
 ## First find a good theme 
@@ -96,7 +94,7 @@ This could be added easily enough to each post that needs syntax highlighting bu
 .right {
   display: block;
   float: right;
-  width: 30%;
+  width: 20%;
 }
 </style>
 
@@ -104,6 +102,14 @@ This could be added easily enough to each post that needs syntax highlighting bu
 
 I used the `custom.html` file to include all the links needed to add a `favicon` to my site. The `svg` for the `favicon` was created in `Inkscape` then I used [RealFaviconGenerator](https://realfavicongenerator.net/) to convert to a `favicon`. This is the same service behind pkgdown's [pkgdown::build_favicon()](https://pkgdown.r-lib.org/reference/build_favicons.html) function.
 
+The last change to the theme I made (for now) was to add the read time for each article at the top of each post. Reading time is available in the Hugo API via `.ReadingTime`. After looking through all the files in the theme, I found that the `themes/hugo-theme-stack/layouts/partials/article/components/details` contained all of the page information such as title, description, and publish date. After finding the place to put the reading time I only need to add the following two `span` tags to get a book icon and the calculated read time.
+
+```html
+<span>{{ partial "helper/icon" "book" }}</span>
+<span class="meta__text post-word-count">{{ .ReadingTime }} min read</span>
+```
+
+The book icon was not a standard part of the theme. Luckily all of the theme icons have been generated using [Tabler Icons](https://tablericons.com/) and so it was easy create one that matched perfectly.
 
 
 
