@@ -100,7 +100,7 @@ This could be added easily enough to each post that needs syntax highlighting bu
 
 <img class = "right" src="../../fav2/favicon.svg"/>
 
-I used the `custom.html` file to include all the links needed to add a `favicon` to my site. The `svg` for the `favicon` was created in `Inkscape` then I used [RealFaviconGenerator](https://realfavicongenerator.net/) to convert to a `favicon`. This is the same service behind pkgdown's [pkgdown::build_favicon()](https://pkgdown.r-lib.org/reference/build_favicons.html) function.
+I used the `custom.html` file to include all the links needed to add a `favicon` to my site. The `svg` for the `favicon` was created in `Inkscape` then I used [RealFaviconGenerator](https://realfavicongenerator.net/) to convert to a `favicon`. This is the same service behind `pkgdown`'s [pkgdown::build_favicon()](https://pkgdown.r-lib.org/reference/build_favicons.html) function.
 
 The last change to the theme I made (for now) was to add the read time for each article at the top of each post. Reading time is available in the Hugo API via `.ReadingTime`. After looking through all the files in the theme, I found that the `themes/hugo-theme-stack/layouts/partials/article/components/details` contained all of the page information such as title, description, and publish date. After finding the place to put the reading time I only need to add the following two `span` tags to get a book icon and the calculated read time.
 
@@ -109,23 +109,44 @@ The last change to the theme I made (for now) was to add the read time for each 
 <span class="meta__text post-word-count">{{ .ReadingTime }} min read</span>
 ```
 
-The book icon was not a standard part of the theme. Luckily all of the theme icons have been generated using [Tabler Icons](https://tablericons.com/) and so it was easy create one that matched perfectly.
-
-
-
-## Widgets
-
-
-
-
+The book icon was not a standard part of the theme. Luckily in the stack theme all of the icons have been generated using [Tabler Icons](https://tablericons.com/) and so it was easy create one that matched perfectly.
 
 
 ## Add comments
 
+In my previous site I used [Disqus](https://blog.disqus.com/) for comments but this time I wanted to try [utterances](https://utteranc.es/). Utterances uses Github issues to manage comments. As my site is in a Github repo and is hosted via Github pages, it made sense to have one less account to manage. First the utterances app needs to be [installed](https://github.com/apps/utterances) onto the repo where you want the comments to go. The you can use the [utterances](https://utteranc.es/) config site to generate a code snippet that needs to be inserted into each page.
+
+```html
+<script src="https://utteranc.es/client.js"
+        repo="[ENTER REPO HERE]"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+```
+
+Again, the stack theme was a good choice as utterances is already part of the theme. So all I needed to do to configure was add the code below to the `config.yaml`.
+
+```yaml
+    comments:
+        enabled: true
+        provider: utterances
+        utterances:
+            repo: mrjoh3/blog
+            issueTerm: pathname
+            label: comment
+```
 
 
-## Content
+## Time to add content
 
-add some more content
+And that, as they say, was that. The site is up and running with the new theme. I have made some minor changes to the theme and am quite happy. Really, where I did have issues I should have read the documentation more carefully. When looking at all the different themes it became clear that some had very little documentation. 
+
+At the start of this post I said "pick a theme with good documentation and an example site." During this process I have been referring the the [theme documentation](https://docs.stack.jimmycai.com/) regularly. It is always helpful, plus the example site meant I saved an enormous amount of time when restructuring the site to suite the theme.
+
+Now that I am up and running, I just need to get to hard on the hard part of adding content. Hopefully this post is a good start.
+
+
 
 
