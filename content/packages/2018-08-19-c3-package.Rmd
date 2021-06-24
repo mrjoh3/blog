@@ -9,13 +9,6 @@ tags:
   - c3
   - graph
 image: img/MRJ_2020_DSC9813.png
-description: ''
-featured: ''
-featuredalt: ''
-featuredpath: ''
-format: ''
-link: ''
-linktitle: ''
 type: itemized
 ---
 
