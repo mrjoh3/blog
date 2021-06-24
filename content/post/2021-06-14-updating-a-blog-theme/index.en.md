@@ -1,7 +1,7 @@
 ---
 title: Switching to and modifying a Hugo Blogdown Theme
 author: 'Matt Johnson'
-date: '2021-06-14'
+date: '2021-06-24'
 slug: updating-a-blog-theme
 image: "img/DSCN1968_edited-1_20070804_165511_002.jpg"
 categories:

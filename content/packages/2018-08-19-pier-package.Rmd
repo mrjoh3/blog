@@ -4,10 +4,12 @@ author: Matt Johnson
 date: '2018-08-19'
 slug: pier-package
 categories:
-  - packages
-  - r
+  - R
+  - data visualisation
 tags:
   - htmlwidgets
+  - pie
+image: img/MRJ_2021_DSC1137.png
 description: ''
 featured: ''
 featuredalt: ''
@@ -33,7 +35,7 @@ Currently the intention is to wrap the entire [d3pie](http://d3pie.org/#docs-api
 
 ## Installation
 
-You probably already guesssed this bit.
+You probably already guessed this bit.
 
 ```{r install, eval=FALSE}
 
