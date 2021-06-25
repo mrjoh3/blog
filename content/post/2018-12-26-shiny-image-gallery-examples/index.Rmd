@@ -2,7 +2,7 @@
 title: Shiny and Rmarkdown Image Galleries
 author: Matt Johnson
 date: '2021-06-19'
-lastUpdated: "`r format(Sys.Date(), '%Y-%m-%d')`"
+lastmod: "`r format(Sys.Date(), '%Y-%m-%d')`"
 slug: shiny-image-gallery-examples
 image: 'img/MRJ_2020_DSC9961.png'
 categories:
