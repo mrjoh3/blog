@@ -2,15 +2,13 @@ baseurl: "https://mrjoh3.github.io/"
 languageCode: en-us
 theme: stack
 paginate: 5
-title: A Simple Blog
+title: Restless Data
 ignoreFiles: 
   - "\\.Rmd$"
   - "\\.Rmarkdown$"
   - "_files$"
   - "_cache$"
 
-# Change it to your Disqus shortname before using
-disqusShortname: stack
 
 # GA Tracking ID
 googleAnalytics:
@@ -40,8 +38,8 @@ params:
         lastUpdated: Jan 02, 2006 15:04 MST
 
     sidebar:
-        emoji: 🧿
-        subtitle: musings and code about anything spatial, visual or interesting.
+        emoji: 👣
+        subtitle: A blog about data analytics and R but also anything spatial, visual or interesting.
         avatar:
             local: true
             src: "img/logo.jpg"
