@@ -9,13 +9,9 @@ categories:
   - data visualisation
 tags:
   - ggplot2
-description: ''
-featured: ''
-featuredalt: ''
-featuredpath: ''
-format: ''
-link: ''
-linktitle: ''
+  - ggtrack
+  - qrencoder
+image: img/MRJ_2020_DSC8761.png
 type: itemized
 ---
 
@@ -23,9 +19,12 @@ type: itemized
 # ggtrack
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/mrjoh3/ggtrack/workflows/R-CMD-check/badge.svg)](https://github.com/mrjoh3/ggtrack/actions)
+[![Codecov test coverage](https://codecov.io/gh/mrjoh3/ggtrack/branch/master/graph/badge.svg)](https://codecov.io/gh/mrjoh3/ggtrack?branch=master)
 <!-- badges: end -->
+
+<div style="float: right;"><img src="../../img/ggtrack-logo.svg" width="280px"></div>
 
 Sometimes in a workplace it is hard to know exactly where or when a specific chart has been produced. This is especially true when someone has copied a chart out of a report to use somewhere else. The `ggtrack` package aims to solve this problem by embedding enough metadata in the charts image to identify the source and the exact time it was produced.
 
@@ -35,93 +34,55 @@ QR codes can then be scanned using a phone scanner or the [quadrangle package](h
 
 The `ggtrack` footer can also display a corporate logo and additional text.
 
+You can find the source code at https://github.com/mrjoh3/ggtrack and the documentation at https://mrjoh3.github.io/ggtrack/
 
-
-## Installation
-
-You can install the latest version of project from [Github](https://github.com) with:
-
-``` r
-devtools::install_github("mrjoh3/ggtrack")
-```
 
 ## Development
 
-This package is in the early stages of development. If you have any suggestions, or feature requests please submit an [issue](https://github.com/mrjoh3/ggtrack/issues). All feedback is welcome.
+This package is still quite young but now contains most of the desired features. It now has a full testing suite and documentation. For future updates all efforts will be made to maintain a stable API. If you have any suggestions, or feature requests please submit an [issue](https://github.com/mrjoh3/ggtrack/issues). All feedback is welcome.
 
-## Example
+
+## A Minimum Example
 
 To start you just need a `ggplot` and some text you wish to encode into the QR. The QR is intended to contain enough information to uniquely identify the report, so a URL, file name or other unique identifier. The QR encode process automatically appends a time stamp. But try to keep the content of the QR code minimal. The for information it is the more pixels its requires and the larger it needs to be. The examples here need a QR code size of 1.8cm to be reliably scanned using a phone off the screen. QR code are encoded using the [qrencoder](https://github.com/hrbrmstr/qrencoder) package.
 
-```{r example, fig.width=6, out.width="80%", fig.align='center', fig.retina=2}
+```{r example, fig.width=8, fig.height=4, out.width="100%", fig.align='center', fig.retina=2, message=FALSE, warning=FALSE}
 library(ggtrack)
 library(ggplot2)
+library(grid)
+library(rWBclimate)
+library(ggthemes)
 
-gg <- ggplot(mapping = aes(x = 1:10, y = rnorm(10))) +
-  geom_bar(stat = 'identity') +
-  theme_minimal()
+temp <- get_historical_temp('aus', "year")
 
-ggtrack(gg,
-        qr_content = 'Report ID: 2c9075a5-4d7e-47a5-8616-55dd88af3dc5')
+tp <- ggplot(temp, aes(x = year, y = data)) +
+  geom_path(color = 'blue') + geom_point(color = 'darkblue') +
+  labs(title = 'Average Annual Temperature for Australia',
+       y = 'degrees celcius') +
+  stat_smooth(se = TRUE, colour = "darkred") +
+  theme_fivethirtyeight() 
 
-```
-
-### Add a Logo
-
-A logo can be added either from a local or remote source. For now only `png` and `jpeg/jpg` are supported.
-
-```{r logo, fig.width=6, out.width="80%", fig.align='center', fig.retina=2}
-ggtrack(gg,
-        qr_content = 'text content here',
-        logo = 'https://www.r-project.org/logo/Rlogo.png')
-
-```
-
-
-
-
-### Add a Caption
-
-Captions use the [gridtext](https://github.com/wilkelab/gridtext) package. So you can use both `HTML` and `markdown` to style. Or if you prefer, create your own `grob` and pass that through instead.
-
-```{r caption, fig.width=6, out.width="80%", fig.align='center', fig.retina=2}
-ggtrack(gg,
-        qr_content = 'For all your image tracking needs: https://github.com/mrjoh3/ggtrack',
-        logo = 'https://www.r-project.org/logo/Rlogo.png',
-        caption = 'Lots of extra info, or a fancy <span style="color:blue">"grob"</span>.')
+ggtrack(tp, 
+        qr_content = paste0('Data accessed using R package: ',
+                            'https://github.com/ropensci/rWBclimate / ',
+                            'https://docs.ropensci.org/rWBclimate/'),
+        logo = '../../static/img/ggtrack-logo.svg',
+        caption = paste0('data accessed from the World Bank <br>',
+                         'Climate Portal via the R package <br>',
+                         '<span style="color:blue">rWBclimate</span>.'),
+        plot.background = element_rect(fill = "#f0f0f0", size = 0)) 
 
 ```
 
 
 
-## Interactive Plots
+## Related and Enabling Packages
 
+The `ggrack` package makes use of many [R packages](https://github.com/mrjoh3/ggtrack/blob/master/DESCRIPTION#L20). But I want to include a special thank-you to some packages without which the `ggtrack` package would not be possible. 
 
-
-```{r interactive, fig.width=6, out.width="80%", fig.align='center', fig.retina=2}
-ggtrack(gg,
-        qr_content = 'For all your image tracking needs: https://github.com/mrjoh3/ggtrack',
-        logo = 'https://www.r-project.org/logo/Rlogo.png',
-        caption = 'Lots of extra info, or a fancy <span style="color:blue">"grob"</span>.',
-        interactive = TRUE)
-
-```
-
-
-
-<style>
-.hide img {
-  float: right;
-  margin-bottom: -50%; /* crop position */
-}
-</style>
-
-<div class="hide">
-
-</div>
-
-
-
-
-
+* The [qrencoder](https://github.com/hrbrmstr/qrencoder) package generate to QR codes that form the basis for much of `ggtrack`. `qrencoder` is both fast and easy to use, and provides a variety of outputs that make it easy to incorporate QR codes into a project.
+* Without [ggplot2](https://github.com/tidyverse/ggplot2/) there would be little point to a package like `ggtrack`. The entire banner object is a `ggplot` with `theme_void` and `annotation_custom` used to place the three tracking elements.
+* The `rasterGrob` elements from the [grid](https://github.com/cran/grid) package make it possible to add both the QR code and arbitrary images such as logos.
+* `grid.arrange` from [gridExtra](https://cran.r-project.org/package=gridExtra) makes it possible to stack the `ggplot` object on top of the tracking banner.
+* The [stegasaur](https://github.com/richfitz/stegasaur) is used the encode arbitrary text or R objects into the plot `PNG`. This is very cool and [stegasaur](https://github.com/richfitz/stegasaur) is a great package that makes it really easy to encode and decode images.
 

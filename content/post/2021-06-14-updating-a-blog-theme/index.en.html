@@ -2,7 +2,7 @@
 title: Changing and modifying a Hugo theme on your R Blogdown site
 author: 'Matt Johnson'
 date: '2021-06-24'
-lastmod: "2021-06-25"
+lastmod: "2021-07-11"
 slug: updating-a-blog-theme
 image: "img/DSCN1968_edited-1_20070804_165511_002.jpg"
 categories:
@@ -83,7 +83,7 @@ git add themes/hugo-theme-stack</code></pre>
   width: 20%;
 }
 </style>
-<p><img class = "right" src="../../fav2/favicon.svg"/></p>
+<p><img class = "right" src="../../fav3/favicon.svg"/></p>
 <p>I used the <code>custom.html</code> file to include all the links needed to add a <code>favicon</code> to my site. The <code>svg</code> for the <code>favicon</code> was created in <code>Inkscape</code>, then I used <a href="https://realfavicongenerator.net/">RealFaviconGenerator</a> to convert to a <code>favicon</code>. This is the same service behind <code>pkgdown</code>’s <a href="https://pkgdown.r-lib.org/reference/build_favicons.html">pkgdown::build_favicon()</a> function.</p>
 <p>The last change to the theme I made (for now) was to add the read time for each article at the top of the page. Reading time is available in the Hugo <a href="https://gohugo.io/variables/page/">page variable</a> <code>.ReadingTime</code>. Hugo calculates reading time as <code>(words + 212) / 213</code>. After looking through all the files in the theme, I found that the <code>themes/hugo-theme-stack/layouts/partials/article/components/details</code> contained all of the page information such as title, description, and publish date. After finding the place to put the reading time I only need to add the following two <code>span</code> tags to get a book icon and the calculated read time.</p>
 <pre class="html"><code>&lt;span&gt;{{ partial &quot;helper/icon&quot; &quot;book&quot; }}&lt;/span&gt;

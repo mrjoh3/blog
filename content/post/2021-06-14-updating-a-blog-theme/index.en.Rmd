@@ -103,7 +103,7 @@ In the `themes/hugo-theme-stack/layouts/partials/head` folder, there is a file c
 }
 </style>
 
-<img class = "right" src="../../fav2/favicon.svg"/>
+<img class = "right" src="../../fav3/favicon.svg"/>
 
 I used the `custom.html` file to include all the links needed to add a `favicon` to my site. The `svg` for the `favicon` was created in `Inkscape`, then I used [RealFaviconGenerator](https://realfavicongenerator.net/) to convert to a `favicon`. This is the same service behind `pkgdown`'s [pkgdown::build_favicon()](https://pkgdown.r-lib.org/reference/build_favicons.html) function.
 
