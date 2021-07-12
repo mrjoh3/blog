@@ -5,6 +5,7 @@ aliases:
   - about-us
   - contact
 lastmod: '2021-06-14'
+image: img/MRJ_2020_DSC9327.png
 menu:
     main: 
         weight: -90
