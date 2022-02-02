@@ -9,7 +9,7 @@ ignoreFiles:
   - "_files$"
   - "_cache$"
 
-
+    
 # GA Tracking ID
 googleAnalytics:
 socialShareTwitter: true
@@ -27,6 +27,7 @@ params:
         - post
     featuredImageField: image
     rssFullContent: true
+    AuthorName: Matt Johnson
     favicon: 
 
     footer:
