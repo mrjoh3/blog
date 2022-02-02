@@ -1,0 +1,178 @@
+---
+title: Generate Web Link Preview Cards in Rmarkdown
+author: Matt Johnson
+date: '2022-02-02'
+slug: generate-web-link-preview-cards-in-rmarkdown
+categories:
+  - web
+  - R
+tags:
+  - rmarkdown
+  - htmltools
+  - webscape
+  - metadata
+description: |
+  Have you ever noticed those fancy website previews that popup in some platforms like 
+  twitter or slack when you include a link. How does the platform know exactly what 
+  to display?
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Recently I was creating a list of R resources and thought it might be interesting to replicate this website preview behavior. If I am honest though, a list of just URL’s is neither interesting nor informative. And I did not want to spend all day looking up extra information about each resource.</p>
+<p>Most modern websites include a large amount of metadata information embedded in the <code>&lt;head&gt;&lt;/head&gt;</code> tag. Where this metadata complies with the <a href="https://ogp.me/">Open Graph Protocol</a> it is used to generate website previews and turns websites into data rich documents. For example if you right-click on this page select “inspect”, you will find the following html <code>&lt;meta&gt;</code> tags:</p>
+<pre class="html"><code>
+&lt;meta property=&#39;og:title&#39; content=&#39;Generate Web Link Preview Cards in Rmarkdown&#39;&gt;
+&lt;meta property=&#39;og:description&#39; content=&#39;Have you ever noticed those fancy website previews that popup in some platforms like 
+twitter or slack when you include a link. How does the platform know exactly what 
+to display?
+&#39;&gt;
+&lt;meta property=&#39;og:site_name&#39; content=&#39;Restless Data&#39;&gt;
+&lt;meta property=&#39;og:type&#39; content=&#39;article&#39;&gt;
+&lt;meta property=&#39;article:section&#39; content=&#39;Post&#39; /&gt;
+&lt;meta property=&#39;article:tag&#39; content=&#39;rmarkdown&#39; /&gt;
+&lt;meta property=&#39;article:tag&#39; content=&#39;htmltools&#39; /&gt;
+&lt;meta property=&#39;article:tag&#39; content=&#39;webscape&#39; /&gt;
+</code></pre>
+<p>To use this data for our own previews within an rmarkdown document we will need to do a little web-scraping and generate some html. Lets start with the web-scraping.</p>
+<p>The <a href="https://rvest.tidyverse.org/">rvest package</a> makes it really easy to import the content of a webpage simply using <code>read_html()</code>. However, in this case we only need the metadata so there is no need to read the entire page. So I opted to use the <code>readLines()</code> function as it can limit the number of lines read in. Let’s use the <a href="https://ogp.me/">Open Graph Protocol</a> website as an example:</p>
+<pre class="r"><code>doc &lt;- readLines(&#39;https://ogp.me/&#39;, n = 21)
+doc</code></pre>
+<pre><code>##  [1] &quot;&lt;!DOCTYPE html&gt;&quot;                                                                                                                           
+##  [2] &quot;&lt;html&gt;&quot;                                                                                                                                    
+##  [3] &quot;  &lt;head prefix=\&quot;og: https://ogp.me/ns#\&quot;&gt;&quot;                                                                                                
+##  [4] &quot;    &lt;meta charset=\&quot;utf-8\&quot;&gt;&quot;                                                                                                              
+##  [5] &quot;    &lt;title&gt;The Open Graph protocol&lt;/title&gt;&quot;                                                                                                
+##  [6] &quot;    &lt;meta name=\&quot;description\&quot; content=\&quot;The Open Graph protocol enables any web page to become a rich object in a social graph.\&quot;&gt;&quot;       
+##  [7] &quot;    &lt;script type=\&quot;text/javascript\&quot;&gt;var _sf_startpt=(new Date()).getTime()&lt;/script&gt;&quot;                                                      
+##  [8] &quot;    &lt;link rel=\&quot;stylesheet\&quot; href=\&quot;base.css\&quot; type=\&quot;text/css\&quot;&gt;&quot;                                                                         
+##  [9] &quot;    &lt;meta property=\&quot;og:title\&quot; content=\&quot;Open Graph protocol\&quot;&gt;&quot;                                                                          
+## [10] &quot;    &lt;meta property=\&quot;og:type\&quot; content=\&quot;website\&quot;&gt;&quot;                                                                                       
+## [11] &quot;    &lt;meta property=\&quot;og:url\&quot; content=\&quot;https://ogp.me/\&quot;&gt;&quot;                                                                                
+## [12] &quot;    &lt;meta property=\&quot;og:image\&quot; content=\&quot;https://ogp.me/logo.png\&quot;&gt;&quot;                                                                      
+## [13] &quot;    &lt;meta property=\&quot;og:image:type\&quot; content=\&quot;image/png\&quot;&gt;&quot;                                                                               
+## [14] &quot;    &lt;meta property=\&quot;og:image:width\&quot; content=\&quot;300\&quot;&gt;&quot;                                                                                    
+## [15] &quot;    &lt;meta property=\&quot;og:image:height\&quot; content=\&quot;300\&quot;&gt;&quot;                                                                                   
+## [16] &quot;    &lt;meta property=\&quot;og:image:alt\&quot; content=\&quot;The Open Graph logo\&quot;&gt;&quot;                                                                      
+## [17] &quot;    &lt;meta property=\&quot;og:description\&quot; content=\&quot;The Open Graph protocol enables any web page to become a rich object in a social graph.\&quot;&gt;&quot;
+## [18] &quot;    &lt;meta prefix=\&quot;fb: https://ogp.me/ns/fb#\&quot; property=\&quot;fb:app_id\&quot; content=\&quot;115190258555800\&quot;&gt;&quot;                                        
+## [19] &quot;    &lt;link rel=\&quot;alternate\&quot; type=\&quot;application/rdf+xml\&quot; href=\&quot;https://ogp.me/ns/ogp.me.rdf\&quot;&gt;&quot;                                           
+## [20] &quot;    &lt;link rel=\&quot;alternate\&quot; type=\&quot;text/turtle\&quot; href=\&quot;https://ogp.me/ns/ogp.me.ttl\&quot;&gt;&quot;                                                   
+## [21] &quot;  &lt;/head&gt;&quot;</code></pre>
+<p>Notice with <code>n = 21</code> we get the entire header including all the metadata tags. Now we can use <code>read_html()</code> to read the text and parse the tags; we want all of the meta tags plus the title tag. The inclusion of <code>paste0()</code> below is for 2 reasons. First, <code>readLines()</code> produces a vector and <code>read_html()</code> requires character of length 1. Second, remember meta tags above? They carried over multiple lines and so <code>paste0()</code> ensures all the tags start and end points line up.</p>
+<pre class="r"><code>library(rvest)
+
+nodes &lt;- doc |&gt;
+  paste0(collapse = &#39;&#39;) |&gt;
+  read_html() |&gt;
+  html_nodes(&#39;meta, title&#39;)
+nodes</code></pre>
+<pre><code>## {xml_nodeset (13)}
+##  [1] &lt;meta charset=&quot;utf-8&quot;&gt;\n
+##  [2] &lt;title&gt;The Open Graph protocol&lt;/title&gt;\n
+##  [3] &lt;meta name=&quot;description&quot; content=&quot;The Open Graph protocol enables any we ...
+##  [4] &lt;meta property=&quot;og:title&quot; content=&quot;Open Graph protocol&quot;&gt;\n
+##  [5] &lt;meta property=&quot;og:type&quot; content=&quot;website&quot;&gt;\n
+##  [6] &lt;meta property=&quot;og:url&quot; content=&quot;https://ogp.me/&quot;&gt;\n
+##  [7] &lt;meta property=&quot;og:image&quot; content=&quot;https://ogp.me/logo.png&quot;&gt;\n
+##  [8] &lt;meta property=&quot;og:image:type&quot; content=&quot;image/png&quot;&gt;\n
+##  [9] &lt;meta property=&quot;og:image:width&quot; content=&quot;300&quot;&gt;\n
+## [10] &lt;meta property=&quot;og:image:height&quot; content=&quot;300&quot;&gt;\n
+## [11] &lt;meta property=&quot;og:image:alt&quot; content=&quot;The Open Graph logo&quot;&gt;\n
+## [12] &lt;meta property=&quot;og:description&quot; content=&quot;The Open Graph protocol enables ...
+## [13] &lt;meta prefix=&quot;fb: https://ogp.me/ns/fb#&quot; property=&quot;fb:app_id&quot; content=&quot;1 ...</code></pre>
+<pre class="r"><code>library(dplyr)
+library(purrr)
+
+
+read_meta &lt;- function(url, n = -1){
+  
+  doc &lt;- readLines(url, n = n) |&gt; 
+    paste0(collapse = &#39;&#39;) # cleans parts of page where tag contents are across multiple rows
+  
+  nodes &lt;- doc |&gt;
+    read_html() |&gt;
+    html_nodes(&#39;meta, title&#39;)
+  
+  meta_properties &lt;- nodes |&gt;
+    map_dfr(~ tibble(property = html_attr(.x, &#39;property&#39;),
+                     content = html_attr(.x, &#39;content&#39;))) |&gt;
+    filter(!is.na(property))
+    
+  meta_names &lt;- nodes |&gt;
+    map_dfr(~ tibble(property = html_attr(.x, &#39;name&#39;),
+                     content = html_attr(.x, &#39;content&#39;))) |&gt;
+    filter(!is.na(property))
+  
+  meta &lt;- bind_rows(meta_properties, meta_names)
+  
+  # check for a title tag
+  title &lt;- nodes |&gt; html_nodes(xpath = &quot;/html/head/title&quot;) |&gt; html_text()
+  title_tag &lt;- if (&#39;og:title&#39; %in% meta$property) &#39;title&#39; else &#39;og:title&#39;
+  
+  if (length(title) &gt; 0) {
+    meta &lt;- meta |&gt;
+      add_row(property = title_tag,
+              content = title)
+  }
+  
+  return(meta)
+  
+}</code></pre>
+<pre class="r"><code>library(htmltools)
+
+
+card_url &lt;- function(metadata){
+  
+  card_title &lt;- metadata |&gt; filter(property == &#39;og:title&#39;) |&gt; pull(content)
+  card_url &lt;- metadata |&gt; filter(property == &#39;og:url&#39;) |&gt; pull(content)
+  card_text &lt;- metadata |&gt; filter(property == &#39;og:description&#39;) |&gt; pull(content)
+  card_img &lt;- metadata |&gt; filter(property == &#39;og:image&#39;) |&gt; pull(content)
+  card_img_alt &lt;- metadata |&gt; filter(property == &#39;og:image:alt&#39;) |&gt; pull(content) # TODO: use title if metadata missing
+  
+  card_author &lt;- metadata |&gt; 
+    filter(property == &#39;author&#39;) |&gt; 
+    pull(content) |&gt;
+    paste(collapse = &#39;&#39;)
+  
+  # render bootstrap card
+  div(class = &#39;card&#39;,
+      style = &#39;margin-bottom:70px; border: 2px solid #e7e7e7; padding: .5rem;&#39;,
+      div(style = &#39;display: inline-grid; grid-template-columns: 55% 40%;&#39;,
+          div(class = &#39;card-body&#39;,
+              h4(class = &#39;card-title&#39;,
+                 a(href = card_url,
+                   card_title)
+                 ),
+              p(class=&quot;card-text text-secondary&quot;,
+                card_text),
+              p(class=&quot;card-text text-secondary&quot;,
+                if (card_author != &#39;&#39;) {
+                  div(&quot;Author(s):&quot;, br(), card_author)
+                })
+            ),
+          div(if (length(card_img) &gt; 0) img(class=&quot;h-100&quot;, src = card_img, alt = card_img_alt) else &#39;&#39;)
+          )
+      )
+}</code></pre>
+<pre class="r"><code>read_meta(&#39;https://restlessdata.com.au&#39;) |&gt;
+  card_url()</code></pre>
+<div class="card" style="margin-bottom:70px; border: 2px solid #e7e7e7; padding: .5rem;">
+<div style="display: inline-grid; grid-template-columns: 55% 40%;">
+<div class="card-body">
+<h4 class="card-title">
+<a href="https://restlessdata.com.au/">Restless Data</a>
+</h4>
+<p class="card-text text-secondary">A blog about data analytics and R but also anything spatial, visual or interesting.</p>
+<p class="card-text text-secondary"></p>
+</div>
+<div>
+<img class="h-100" src="https://restlessdata.com.au/img/logo.jpg"/>
+</div>
+</div>
+</div>
