@@ -1,5 +1,5 @@
 ---
-title: About
+title: About Restless Data
 date: "2018-07-20 23:17:40 AEST"
 aliases:
   - about-us
