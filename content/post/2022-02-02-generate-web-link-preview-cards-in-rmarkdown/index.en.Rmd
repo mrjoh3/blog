@@ -26,6 +26,11 @@ library(knitr)
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 ```
 
+<link rel="stylesheet" href="card.css">
+
+
+
+
 Recently I was creating a list of R resources and thought it might be interesting to replicate website previews seen when including links in twitter of slack posts. If I am honest though, a list of just URL's is neither interesting nor informative. And I did not want to spend all day looking up extra information about each resource.
 
 Most modern websites include a large amount of metadata information embedded in the `<head></head>` tag. Where this metadata complies with the [Open Graph Protocol](https://ogp.me/) it is used to generate website previews and turns websites into data rich documents. For example if you right-click on this page select "inspect", you will find the following html `<meta>` tags:
@@ -99,7 +104,7 @@ metadata <- map_dfr(c('property', 'name'), function(tag){
 metadata <- setNames(as.list(metadata$content), metadata$property)
 ```
 
-Now that everything is working we can wrap it up into a function that takes any URL and returns a lookup list of the metadata. In the function below I am also pulling out the title tag. It will be used where `og:title` is missing.
+Now that everything is working we can wrap it up into a function that takes any URL and returns a metadata lookup list. In the function below I am also pulling out the title tag. It can be used if the `og:title` is missing.
 
 
 ```{r metadata}
@@ -149,46 +154,48 @@ read_meta <- function(url){
 ```
 
 
-## Render a Website Preview
+## Render a Website Preview Card
+
+Added a component like a card is much easier due to CSS frameworks like [Bootstrap](https://getbootstrap.com/docs/4.0/components/card/). In the card below I have a simple card created using [htmltools]() `tags` with predefined styles from Bootstrap.  
+
+```{r}
+library(htmltools)
+
+card <- function(metadata){
+  div(class = 'card text-white bg-secondary mb-3 border-light border-3',
+            div(style = 'display: inline-grid; grid-template-columns: 55% 40%;padding-left:12px',
+                div(class = 'card-body text-dark',
+                    h2(class = 'card-title',
+                       a(href = metadata$`og:url`,
+                         metadata$`og:title`)
+                       ),
+                    p(class="card-text text-secondary",
+                      metadata$`og:description`),
+                    p(class="card-text text-secondary",
+                      if (!is.null(metadata$author)) {
+                        div("Author(s):", br(), metadata$author)
+                      })
+                  ),
+                div(if (!is.null(metadata$`og:image`)) img(class="h-100", 
+                                                           style = 'padding:20px;',
+                                                           src = metadata$`og:image`, alt = metadata$`og:image:alt`) else '')
+                )
+            )
+}
+```
 
 
 ```{r card, echo=TRUE, message=FALSE, warning=FALSE}
-
-
-library(htmltools)
-
 
 card_url <- function(metadata){
   
   if (!is.null(metadata$`og:image:alt`)) {
     metadata$`og:image:alt` <- metadata$`og:title`
   }
-  
   if (!is.null(metadata$author) & length(metadata$authur) > 1) {
     metadata$author <- metadata$author |> paste(collapse = '')
   }
-    
-  # render bootstrap card
-  div(class = 'card',
-      style = 'margin-bottom: 70px; border: 2px solid #e7e7e7; padding: .5rem;',
-      div(style = 'display: inline-grid; grid-template-columns: 55% 40%;',
-          div(class = 'card-body',
-              h4(class = 'card-title',
-                 a(href = metadata$`og:url`,
-                   metadata$`og:title`)
-                 ),
-              p(class="card-text text-secondary",
-                metadata$`og:description`),
-              p(class="card-text text-secondary",
-                if (!is.null(metadata$author)) {
-                  div("Author(s):", br(), metadata$author)
-                })
-            ),
-          div(if (!is.null(metadata$`og:image`)) img(class="h-100", 
-                                                     style = 'padding:20px;',
-                                                     src = metadata$`og:image`, alt = metadata$`og:image:alt`) else '')
-          )
-      )
+  card(metadata)
 }
 ```
 
@@ -196,7 +203,7 @@ card_url <- function(metadata){
 
 ```{r render a card}
 
-read_meta('https://restlessdata.com.au') |>
+read_meta('https://bookdown.org/yihui/rmarkdown/') |>
   card_url()
 
 ```
