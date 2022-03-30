@@ -1,24 +1,25 @@
 ---
-title: Generate Web Link Preview Cards in Rmarkdown
+title: Using Website Metadata for URL Previews in Rmarkdown
 author: Matt Johnson
-date: '2022-02-02'
-slug: generate-web-link-preview-cards-in-rmarkdown
+date: '2022-03-30'
+lastmod: "`r format(Sys.Date(), '%Y-%m-%d')`"
+slug: using-website-metadata-for-url-previews-in-rmarkdown
+image: 'img/2022_0326_08021800.jpg'
 categories:
   - web
   - R
+  - metadata
 tags:
   - rmarkdown
   - htmltools
   - webscape
-  - metadata
+  - bootstrap
+  - cards
 description: |
   Have you ever noticed those fancy website previews that popup in some platforms like 
   twitter or slack when you include a link. How does the platform know exactly what 
   to display?
-featured: ''
-featuredalt: ''
-featuredpath: ''
-linktitle: ''
+draft: false
 ---
 
 ```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
@@ -29,15 +30,13 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 <link rel="stylesheet" href="card.css">
 
 
-
-
 Recently I was creating a list of R resources and thought it might be interesting to replicate website previews seen when including links in twitter of slack posts. If I am honest though, a list of just URL's is neither interesting nor informative. And I did not want to spend all day looking up extra information about each resource.
 
 Most modern websites include a large amount of metadata information embedded in the `<head></head>` tag. Where this metadata complies with the [Open Graph Protocol](https://ogp.me/) it is used to generate website previews and turns websites into data rich documents. For example if you right-click on this page select "inspect", you will find the following html `<meta>` tags:
 
 ```html
 
-<meta property='og:title' content='Generate Web Link Preview Cards in Rmarkdown'>
+<meta property='og:title' content='Using Website Metadata for URL Previews in Rmarkdown'>
 <meta property='og:description' content='Have you ever noticed those fancy website previews that popup in some platforms like 
 twitter or slack when you include a link. How does the platform know exactly what 
 to display?
@@ -52,7 +51,7 @@ The Open Graph tags are where the property attribute starts with "og:". There ar
 
 ## Extracting Metadata
 
-The [rvest package](https://rvest.tidyverse.org/) makes it really easy to import the content of a webpage simply using `read_html()`. However, in this case we only need the metadata so there is no need to read the entire page. So I opted to use the `readLines()` function as it can limit the number of lines read in. Also, if you run `readLines()` within a `while` loop you can automatically stop reading once you find the end of the header. In general, this is not a particularly efficient way to read files, but as we mostly need to read less than 100 lines, it is fine.
+The [rvest package](https://rvest.tidyverse.org/) makes it really easy to import the content of a webpage simply using `read_html(url) |> html_element('head')`. However, in this case we only need the metadata so there is no need to read the entire web page. The `readLines()` function can limit the number of lines read into R. Also, if you run `readLines()` within a `while` loop you can automatically stop reading once you find the end of the header. In general, this is not a particularly efficient way to read large files, but it is very fast in this case as we mostly need to read less than 100 lines.
 
 Let's use the [Open Graph Protocol](https://ogp.me/) website as an example:
 
@@ -64,17 +63,15 @@ continue <- TRUE
 doc <- as.character()
 
 while(continue){
-
   l <- readLines(page, n = 1)
   continue <- !grepl('</head>', x = l, ignore.case = TRUE)
   doc <- c(doc, l)
-
 }
 
 doc
 ```
 
-Now we can use `read_html()` to read the text and parse the tags; we want all of the meta tags plus the title tag. The inclusion of `paste0()` produces a character of length 1 which is required for `read_htlp()`, plus it ensures all the tags start and end points line up. The function `html_nodes()` is used to select only the nodes we are interested in. Some websites don't have a `meta` tag for the website title, so we select the `title` tag just in case.
+Now we can use `read_html()` to read the text and parse the tags; we want all of the meta tags plus the title tag. The inclusion of `paste0()` produces a character of length 1 which is required for `read_html()`, plus it ensures all the tags start and end points line up. The function `html_nodes()` is used to select only the nodes we are interested in. Some websites don't have a `meta` tag for the website title, so we select the `title` tag just in case.
 
 ```{r parse}
 
@@ -112,7 +109,6 @@ Now that everything is working we can wrap it up into a function that takes any 
 read_meta <- function(url){
   
   page <- file(url, open = "r")
-  
   continue <- TRUE
   doc <- as.character()
   
@@ -156,7 +152,7 @@ read_meta <- function(url){
 
 ## Render a Website Preview Card
 
-Added a component like a card is much easier due to CSS frameworks like [Bootstrap](https://getbootstrap.com/docs/4.0/components/card/). In the card below I have a simple card created using [htmltools]() `tags` with predefined styles from Bootstrap.  
+Adding a web component like a card is now quite easy due to CSS frameworks like [Bootstrap](https://getbootstrap.com/docs/4.0/components/card/). In the card below I have a simple card created using [htmltools](https://CRAN.R-project.org/package=htmltools) `tags` with predefined styles from Bootstrap. Apart from importing the Bootstrap CSS library, no other CSS is needed for this card. 
 
 ```{r}
 library(htmltools)
@@ -185,33 +181,42 @@ card <- function(metadata){
 ```
 
 
+Before calling the `card` function we just need to do a little cleaning up of the metadata. First where there are multiple authors listed in the metadata, we need to collapse them into a single `character` to fit in our author `div`. Next, we want to ensure that if the `og:image:alt` tag is missing, something meaningful can be used in its place.  
+
 ```{r card, echo=TRUE, message=FALSE, warning=FALSE}
 
-card_url <- function(metadata){
+card_render <- function(metadata){
   
-  if (!is.null(metadata$`og:image:alt`)) {
-    metadata$`og:image:alt` <- metadata$`og:title`
-  }
   if (!is.null(metadata$author) & length(metadata$authur) > 1) {
     metadata$author <- metadata$author |> paste(collapse = '')
   }
+  
+  if (!is.null(metadata$`og:image:alt`)) {
+    metadata$`og:image:alt` <- paste0('Cover Image for ', metadata$`og:title`)
+  }
+
   card(metadata)
 }
 ```
 
-
+Finally we render the card. With the checks we have added around metadata titles, authors and alternate image text we should be able to produce a basic summary for any URL; from an R book to a funny movie.
 
 ```{r render a card}
 
 read_meta('https://bookdown.org/yihui/rmarkdown/') |>
-  card_url()
+  card_render()
 
 ```
 
 
+```{r render another card}
 
+read_meta('https://www.imdb.com/title/tt1386588/') |>
+  card_render()
 
+```
 
+This has just been a simple example. Most websites provide a lot of structured information via metadata within the `<head>` tag. So check out the [Open Graph Protocol](https://ogp.me/) website to understand all the possibilities. 
 
 
 
